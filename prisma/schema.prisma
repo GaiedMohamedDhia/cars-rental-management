@@ -1,0 +1,57 @@
+// This is your Prisma schema file for PostgreSQL
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Car {
+  id            Int       @id @default(autoincrement())
+  numImma       String    @unique
+  marque        String
+  modele        String
+  kilometrage   Int
+  etat          Int       @default(0) // 0 = disponible, 1 = louée
+  prixLocation  Float
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  rentals       Rental[]
+
+  @@map("cars")
+}
+
+model Renter {
+  id        Int       @id @default(autoincrement())
+  nom       String
+  prenom    String
+  adresse   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  rentals   Rental[]
+
+  @@map("renters")
+}
+
+model Rental {
+  id           Int       @id @default(autoincrement())
+  carId        Int
+  renterId     Int
+  dateDebut    DateTime  @default(now())
+  dateFin      DateTime?
+  kmDebut      Int
+  kmFin        Int?
+  montantTotal Float?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  car          Car       @relation(fields: [carId], references: [id])
+  renter       Renter    @relation(fields: [renterId], references: [id])
+
+  @@map("rentals")
+}
+

@@ -1,0 +1,87 @@
+# Frontend Dockerfile - Next.js
+FROM node:20-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json* ./
+
+# Install dependencies with legacy peer deps to avoid conflicts
+RUN npm install --legacy-peer-deps
+
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Set environment variables for build
+# These MUST be available at build time for Next.js to bake them in
+ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+ARG DATABASE_URL
+
+ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+ENV DATABASE_URL=${DATABASE_URL}
+
+# API Endpoints (all derived from base URL)
+ENV NEXT_PUBLIC_API_HEALTH=/health
+ENV NEXT_PUBLIC_API_ROOT=/
+ENV NEXT_PUBLIC_API_CARS_BASE=/cars
+ENV NEXT_PUBLIC_API_CARS_GET_ALL=/cars
+ENV NEXT_PUBLIC_API_CARS_GET_BY_ID=/cars/{id}
+ENV NEXT_PUBLIC_API_CARS_CREATE=/cars
+ENV NEXT_PUBLIC_API_CARS_UPDATE=/cars/{id}
+ENV NEXT_PUBLIC_API_CARS_DELETE=/cars/{id}
+ENV NEXT_PUBLIC_API_RENTERS_BASE=/renters
+ENV NEXT_PUBLIC_API_RENTERS_GET_ALL=/renters
+ENV NEXT_PUBLIC_API_RENTERS_GET_BY_ID=/renters/{id}
+ENV NEXT_PUBLIC_API_RENTERS_CREATE=/renters
+ENV NEXT_PUBLIC_API_RENTERS_UPDATE=/renters/{id}
+ENV NEXT_PUBLIC_API_RENTERS_DELETE=/renters/{id}
+ENV NEXT_PUBLIC_API_RENTERS_SEARCH=/renters
+ENV NEXT_PUBLIC_API_RENTALS_BASE=/rentals
+ENV NEXT_PUBLIC_API_RENTALS_GET_ALL=/rentals
+ENV NEXT_PUBLIC_API_RENTALS_GET_BY_ID=/rentals/{id}
+ENV NEXT_PUBLIC_API_RENTALS_GET_BY_CAR=/rentals/car/{car_id}
+ENV NEXT_PUBLIC_API_RENTALS_GET_BY_RENTER=/rentals/renter/{renter_id}
+ENV NEXT_PUBLIC_API_RENTALS_CREATE=/rentals
+ENV NEXT_PUBLIC_API_RENTALS_UPDATE=/rentals/{id}
+ENV NEXT_PUBLIC_API_RENTALS_DELETE=/rentals/{id}
+
+# Generate Prisma Client
+RUN npx prisma generate
+
+# Build Next.js application
+RUN npm run build
+
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+# Create a non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy necessary files from builder
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+
+# Set correct permissions
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]

@@ -1,0 +1,64 @@
+# Dependencies
+node_modules
+.pnpm-store
+.npm
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info
+dist
+build
+.venv
+venv
+ENV
+
+# Next.js build output
+.next
+out
+.vercel
+
+# Misc
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Testing
+coverage
+.nyc_output
+
+# Database
+*.db
+*.sqlite
+prisma/dev.db
+
+# Documentation (not needed in Docker)
+*.md
+!README.md
+DOCKER_README.md
+
+# Environment files (we use build args instead)
+.env.local
+.env.development
+.env.test
+
+# Do NOT ignore these - needed for build
+# .env (contains NEXT_PUBLIC_* variables)
+# prisma/schema.prisma

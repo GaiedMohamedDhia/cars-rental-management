@@ -1,0 +1,79 @@
+services:
+  # PostgreSQL Database
+  database:
+    image: postgres:16-alpine
+    container_name: cars-rental-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dhia21
+      POSTGRES_DB: cars-rental
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - cars-rental-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cars-rental"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: cars-rental-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@database:5432/cars-rental
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "8000:8000"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - cars-rental-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      args:
+        # Use localhost:8000 - works for browser AND SSR (via host-gateway)
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+        DATABASE_URL: postgresql://postgres:postgres@database:5432/cars-rental?schema=public
+    container_name: cars-rental-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL:  postgresql://postgres:dhia21@database:5432/cars-rental
+    depends_on:
+      backend:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+    networks:
+      - cars-rental-network
+    # Map localhost inside container to host machine (for SSR to reach backend)
+    extra_hosts:
+      - "localhost:host-gateway"
+
+networks:
+  cars-rental-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
