@@ -13,14 +13,22 @@ import type {
   MessageResponse,
 } from "@/types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
+const getApiBaseUrl = () => {
+  // Server-side: use the backend URL directly
+  if (typeof window === "undefined") {
+    return process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+  }
+  // Client-side: use relative path (will be rewrote by Next.js)
+  return process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
+};
 
 async function apiFetch<T>(
   endpoint: string,
   options?: RequestInit
 ): Promise<ApiResponse<T>> {
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const apiBaseUrl = getApiBaseUrl();
+    const response = await fetch(`${apiBaseUrl}${endpoint}`, {
       ...options,
       cache: "no-store",
       headers: {
@@ -45,11 +53,15 @@ async function apiFetch<T>(
       data,
     };
   } catch (error) {
-    console.error("API Error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Network error";
+    if (typeof window === "undefined") {
+      // Server-side: safe logging without object serialization
+      console.error("API Error:", errorMessage);
+    }
 
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Network error",
+      error: errorMessage,
     };
   }
 }

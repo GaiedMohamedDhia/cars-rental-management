@@ -2,12 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-
+  productionBrowserSourceMaps: false,
+  
   async rewrites() {
     return [
       {
         source: "/api/:path*",
-        destination: "http://cars-rental-backend:8000/:path*",
+        destination: "http://localhost:8000/:path*",
       },
     ];
   },
