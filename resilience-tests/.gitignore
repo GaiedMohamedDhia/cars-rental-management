@@ -1,0 +1,11 @@
+.venv/
+.tk-runtime/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+results/raw/*
+results/processed/*
+results/charts/*
+results/reports/*
+results/logs/*

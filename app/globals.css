@@ -38,3 +38,78 @@ body {
 
 /* prevent overflow issues */
 .no-overflow { overflow: hidden; }
+
+.filter-control {
+  height: 2.75rem;
+  width: 100%;
+  min-width: 0;
+  border-radius: .75rem;
+  border: 1px solid rgb(51 65 85);
+  background: rgb(2 6 23 / .55);
+  padding-left: .75rem;
+  padding-right: .75rem;
+  color: rgb(226 232 240);
+  font-size: .8125rem;
+  outline: none;
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.filter-control:hover { border-color: rgb(71 85 105); }
+.filter-control:focus {
+  border-color: rgb(6 182 212);
+  box-shadow: 0 0 0 3px rgb(6 182 212 / .12);
+}
+.action-button {
+  display: inline-flex;
+  height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  gap: .375rem;
+  border-radius: .5rem;
+  border: 1px solid rgb(51 65 85);
+  padding: 0 .625rem;
+  color: rgb(203 213 225);
+  font-size: .75rem;
+  font-weight: 700;
+  transition: background .18s ease, border-color .18s ease;
+}
+  .action-button:hover { border-color: rgb(71 85 105); background: rgb(30 41 59); }
+
+  @media print {
+    body * {
+      visibility: hidden !important;
+    }
+    #invoice-document,
+    #invoice-document * {
+      visibility: visible !important;
+    }
+    #invoice-document {
+      position: absolute !important;
+      inset: 0 auto auto 0 !important;
+      width: 210mm !important;
+      min-height: 297mm !important;
+      box-shadow: none !important;
+    }
+    @page {
+      size: A4;
+      margin: 0;
+    }
+  }
+
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .vehicle-tilt {
+    transform: none !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .28) !important;
+    transition: none !important;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

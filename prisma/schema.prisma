@@ -43,8 +43,11 @@ model Rental {
   renterId     Int
   dateDebut    DateTime  @default(now())
   dateFin      DateTime?
+  dateFinPrevue DateTime?
+  dateRetourReelle DateTime?
   kmDebut      Int
   kmFin        Int?
+  statut       String    @default("Active")
   montantTotal Float?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
@@ -54,4 +57,3 @@ model Rental {
 
   @@map("rentals")
 }
-

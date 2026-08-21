@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" role="img" aria-label="TuniCars+">
+  <defs>
+    <linearGradient id="g" x1="30" y1="15" x2="162" y2="178" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#42F5A7"/><stop offset=".48" stop-color="#16D9ED"/><stop offset="1" stop-color="#2864FF"/>
+    </linearGradient>
+    <filter id="b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7" result="x"/><feFlood flood-color="#16D9ED" flood-opacity=".35"/><feComposite in2="x" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <path filter="url(#b)" d="M96 8C55 8 22 41 22 82c0 52 74 102 74 102s74-50 74-102C170 41 137 8 96 8Z" fill="url(#g)"/>
+  <path d="M96 21c-34 0-61 27-61 61 0 35 41 72 61 87 20-15 61-52 61-87 0-34-27-61-61-61Z" fill="#071527"/>
+  <circle cx="96" cy="82" r="50" fill="none" stroke="url(#g)" stroke-width="3"/>
+  <g fill="none" stroke="url(#g)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M57 86h78l-7-20c-2-6-7-10-13-10H77c-6 0-11 4-13 10l-7 20Z" stroke-width="5"/>
+    <path d="M52 86v19c0 5 4 9 9 9h70c5 0 9-4 9-9V86" stroke-width="5"/>
+    <path d="M62 96h16m36 0h16m-47 7h26" stroke-width="6"/>
+  </g>
+  <circle cx="70" cy="112" r="6" fill="#16D9ED"/><circle cx="122" cy="112" r="6" fill="#2864FF"/>
+</svg>

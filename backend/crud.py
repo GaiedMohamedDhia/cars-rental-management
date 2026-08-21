@@ -1,6 +1,4 @@
-"""
-CRUD Operations for Database Models
-"""
+
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import IntegrityError
 from typing import List, Optional
@@ -12,17 +10,48 @@ except ImportError:
     import models, schemas
 
 
+def _as_datetime(value):
+    if value is None or isinstance(value, datetime):
+        return value
+    if isinstance(value, (int, float)):
+        return datetime.fromtimestamp(value / 1000)
+    if isinstance(value, str):
+        try:
+            return datetime.fromisoformat(value.replace("Z", "+00:00")).replace(tzinfo=None)
+        except ValueError:
+            return None
+    return None
+
+
+def apply_rental_status(rental):
+    """Derive a return status only from a confirmed return and the planned deadline."""
+    planned = _as_datetime(getattr(rental, "dateFinPrevue", None)) or _as_datetime(
+        getattr(rental, "dateFin", None)
+    )
+    actual = _as_datetime(getattr(rental, "dateRetourReelle", None))
+    returned = actual is not None or getattr(rental, "kmFin", None) is not None
+
+    if returned:
+        if actual and planned and actual > planned:
+            rental.statut = "Retournée en retard"
+        else:
+            rental.statut = "Retournée à temps"
+    elif planned and datetime.utcnow().date() > planned.date():
+        rental.statut = "En retard"
+    else:
+        rental.statut = "Active"
+    return rental
+
+
 def convert_timestamps_to_iso(obj):
-    """Convert millisecond timestamps to ISO strings"""
+    """Normalize legacy millisecond timestamps while preserving DateTime values."""
     if hasattr(obj, '__dict__'):
-        for key in ['createdAt', 'updatedAt', 'dateDebut', 'dateFin']:
+        if hasattr(obj, "carId") and hasattr(obj, "renterId"):
+            apply_rental_status(obj)
+        for key in ['createdAt', 'updatedAt', 'dateDebut', 'dateFin', 'dateFinPrevue', 'dateRetourReelle']:
             value = getattr(obj, key, None)
             if value and isinstance(value, (int, float)):
-                # Convert milliseconds to seconds and format as ISO string
-                setattr(obj, key, datetime.fromtimestamp(value / 1000).isoformat() + 'Z')
-            elif value and not isinstance(value, str):
-                # If it's already a datetime object, convert to string
-                setattr(obj, key, value.isoformat() + 'Z' if hasattr(value, 'isoformat') else str(value))
+                setattr(obj, key, datetime.fromtimestamp(value / 1000))
     return obj
 
 
@@ -42,13 +71,25 @@ def get_car_by_registration(db: Session, numImma: str) -> Optional[models.Car]:
 
 def get_cars(db: Session, skip: int = 0, limit: int = 100) -> List[models.Car]:
     """Get all cars with pagination"""
-    cars = db.query(models.Car).offset(skip).limit(limit).all()
+    cars = (
+        db.query(models.Car)
+        .filter(models.Car.is_active.is_(True))
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
     return [convert_timestamps_to_iso(car) for car in cars]
 
 
 def get_available_cars(db: Session, skip: int = 0, limit: int = 100) -> List[models.Car]:
     """Get all available cars (etat = 0)"""
-    cars = db.query(models.Car).filter(models.Car.etat == 0).offset(skip).limit(limit).all()
+    cars = (
+        db.query(models.Car)
+        .filter(models.Car.etat == 0, models.Car.is_active.is_(True))
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
     return [convert_timestamps_to_iso(car) for car in cars]
 
 
@@ -102,8 +143,14 @@ def get_renter(db: Session, renter_id: int) -> Optional[models.Renter]:
 
 
 def get_renters(db: Session, skip: int = 0, limit: int = 100) -> List[models.Renter]:
-    """Get all renters with pagination"""
-    renters = db.query(models.Renter).offset(skip).limit(limit).all()
+    """Get active renters with pagination."""
+    renters = (
+        db.query(models.Renter)
+        .filter(models.Renter.is_active.is_(True))
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
     return [convert_timestamps_to_iso(renter) for renter in renters]
 
 
@@ -111,7 +158,8 @@ def search_renters(db: Session, query: str, skip: int = 0, limit: int = 100) -> 
     """Search renters by name or first name"""
     search_pattern = f"%{query}%"
     renters = db.query(models.Renter).filter(
-        (models.Renter.nom.like(search_pattern)) | 
+        models.Renter.is_active.is_(True),
+        (models.Renter.nom.like(search_pattern)) |
         (models.Renter.prenom.like(search_pattern))
     ).offset(skip).limit(limit).all()
     return [convert_timestamps_to_iso(renter) for renter in renters]
@@ -136,7 +184,6 @@ def update_renter(db: Session, renter_id: int, renter_update: schemas.RenterUpda
     if not db_renter:
         return None
     
-    # Update only provided fields
     update_data = renter_update.model_dump(exclude_unset=True)
     for key, value in update_data.items():
         setattr(db_renter, key, value)
@@ -147,18 +194,6 @@ def update_renter(db: Session, renter_id: int, renter_update: schemas.RenterUpda
     return convert_timestamps_to_iso(db_renter)
 
 
-def delete_renter(db: Session, renter_id: int) -> bool:
-    """Delete a renter"""
-    db_renter = get_renter(db, renter_id)
-    if not db_renter:
-        return False
-    
-    db.delete(db_renter)
-    db.commit()
-    return True
-
-
-# ============== Rental CRUD Operations ==============
 
 def get_rental(db: Session, rental_id: int) -> Optional[models.Rental]:
     """Get a rental by ID"""
@@ -197,11 +232,14 @@ def get_rentals(db: Session, skip: int = 0, limit: int = 100) -> List[models.Ren
 
 
 def get_active_rentals(db: Session, skip: int = 0, limit: int = 100) -> List[models.Rental]:
-    """Get all active rentals (dateFin is null)"""
+    """Get all rentals whose return has not been confirmed."""
     rentals = db.query(models.Rental).options(
         joinedload(models.Rental.car),
         joinedload(models.Rental.renter)
-    ).filter(models.Rental.dateFin == None).offset(skip).limit(limit).all()
+    ).filter(
+        models.Rental.dateRetourReelle == None,
+        models.Rental.kmFin == None,
+    ).offset(skip).limit(limit).all()
     for rental in rentals:
         convert_timestamps_to_iso(rental)
         if rental.car:
@@ -245,18 +283,23 @@ def create_rental(db: Session, rental: schemas.RentalCreate) -> models.Rental:
     """Create a new rental and update car state to rented"""
     # Check if car exists and is available
     car = get_car(db, rental.carId)
-    if not car:
+    if not car or not car.is_active:
         raise ValueError("Car not found")
-    if car.etat == 1:
-        raise ValueError("Car is already rented")
+    if car.etat != 0:
+        raise ValueError("Car is not available")
     
     # Check if renter exists
     renter = get_renter(db, rental.renterId)
-    if not renter:
-        raise ValueError("Renter not found")
-    
-    # Create rental - prepare data
+    if not renter or not renter.is_active:
+        raise ValueError("Renter not found or archived")
+  
     rental_data = rental.model_dump(exclude_unset=True)
+    planned_return = rental_data.get("dateFinPrevue") or rental_data.get("dateFin")
+    if planned_return:
+        planned_return = _as_datetime(planned_return)
+        rental_data["dateFinPrevue"] = planned_return
+        rental_data["dateFin"] = planned_return
+    rental_data["statut"] = "Active"
     if 'dateDebut' not in rental_data or not rental_data['dateDebut']:
         rental_data['dateDebut'] = datetime.utcnow().isoformat()
     
@@ -271,8 +314,12 @@ def create_rental(db: Session, rental: schemas.RentalCreate) -> models.Rental:
     car.kilometrage = rental.kmDebut
     car.updatedAt = datetime.utcnow().isoformat()
     
-    db.commit()
-    db.refresh(db_rental)
+    try:
+        db.commit()
+        db.refresh(db_rental)
+    except Exception:
+        db.rollback()
+        raise
     return db_rental
 
 
@@ -284,18 +331,57 @@ def update_rental(db: Session, rental_id: int, rental_update: schemas.RentalUpda
     
     # Update only provided fields
     update_data = rental_update.model_dump(exclude_unset=True)
+    if "renterId" in update_data:
+        renter = db.query(models.Renter).filter(
+            models.Renter.id == update_data["renterId"],
+            models.Renter.is_active.is_(True),
+        ).first()
+        if renter is None:
+            raise ValueError("Le locataire sélectionné est introuvable ou archivé.")
+
+    if "carId" in update_data and update_data["carId"] != db_rental.carId:
+        new_car = db.query(models.Car).filter(
+            models.Car.id == update_data["carId"],
+            models.Car.is_active.is_(True),
+        ).first()
+        if new_car is None or new_car.etat != 0:
+            raise ValueError("La voiture sélectionnée n'est pas disponible.")
+        old_car = db.query(models.Car).filter(models.Car.id == db_rental.carId).first()
+        if old_car:
+            old_car.etat = 0
+            old_car.updatedAt = datetime.utcnow()
+        new_car.etat = 1
+        new_car.updatedAt = datetime.utcnow()
+
+    if "dateDebut" in update_data:
+        update_data["dateDebut"] = _as_datetime(update_data["dateDebut"])
+    if "dateFinPrevue" in update_data or ("dateFin" in update_data and rental_update.kmFin is None):
+        planned_return = _as_datetime(update_data.get("dateFinPrevue") or update_data.get("dateFin"))
+        update_data["dateFinPrevue"] = planned_return
+        update_data["dateFin"] = planned_return
+
+    if rental_update.kmFin is not None:
+        actual_return = _as_datetime(update_data.get("dateRetourReelle"))
+        # Backward compatibility for older clients that sent dateFin as the actual return.
+        if actual_return is None and update_data.get("dateFin") and "dateFinPrevue" not in update_data:
+            actual_return = _as_datetime(update_data.get("dateFin"))
+        update_data["dateRetourReelle"] = actual_return or datetime.utcnow()
+        update_data.pop("dateFin", None)
+        update_data.pop("statut", None)
     for key, value in update_data.items():
         setattr(db_rental, key, value)
     
     db_rental.updatedAt = datetime.utcnow().isoformat()
     
-    # If car is returned (dateFin and kmFin are set), update car state and mileage
-    if rental_update.dateFin and rental_update.kmFin is not None:
+   
+    if rental_update.kmFin is not None:
         car = get_car(db, db_rental.carId)
         if car:
             car.etat = 0  # Set car as available
             car.kilometrage = rental_update.kmFin
             car.updatedAt = datetime.utcnow().isoformat()
+
+    apply_rental_status(db_rental)
     
     db.commit()
     db.refresh(db_rental)
@@ -303,20 +389,23 @@ def update_rental(db: Session, rental_id: int, rental_update: schemas.RentalUpda
 
 
 def delete_rental(db: Session, rental_id: int) -> bool:
-    """Delete a rental"""
-    db_rental = get_rental(db, rental_id)
+    """Delete a rental and its payments, then release its vehicle."""
+    db_rental = db.query(models.Rental).filter(models.Rental.id == rental_id).first()
     if not db_rental:
         return False
-    
-    # If rental was active, set car back to available
-    if not db_rental.dateFin:
-        car = get_car(db, db_rental.carId)
-        if car:
-            car.etat = 0
-            car.updatedAt = datetime.utcnow().isoformat()
-    
-    db.delete(db_rental)
-    db.commit()
+
+    car = db.query(models.Car).filter(models.Car.id == db_rental.carId).first()
+    if car:
+        car.etat = 0
+        car.updatedAt = datetime.utcnow()
+
+    try:
+        db.query(models.Payment).filter(
+            models.Payment.rental_id == rental_id
+        ).delete(synchronize_session=False)
+        db.delete(db_rental)
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
     return True
-
-

@@ -2,73 +2,89 @@
 FastAPI Main Application
 Car Rental Management System Backend
 """
-from fastapi import FastAPI, HTTPException
+
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
+import logging
 import uvicorn
 
 try:
-    from .database import engine, Base
-    from .routers import cars, renters, rentals, auth, maintenance
+    from .database import Base, engine, migrate_car_display_fields, migrate_payment_delete_rules, migrate_rental_return_fields, migrate_user_profile_fields, migrate_renter_contact_fields
+    from .routers import auth, cars, maintenance, payments, renters, rentals
 except ImportError:
-    from database import engine, Base
-    from routers import cars, renters, rentals, auth, maintenance
+    from database import Base, engine, migrate_car_display_fields, migrate_payment_delete_rules, migrate_rental_return_fields, migrate_user_profile_fields, migrate_renter_contact_fields
+    from routers import auth, cars, maintenance, payments, renters, rentals
+
 
 # Create database tables
-# Note: In production, use Alembic for migrations instead
+# In production, Alembic migrations are recommended.
 Base.metadata.create_all(bind=engine)
+migrate_rental_return_fields()
+migrate_car_display_fields()
+migrate_user_profile_fields()
+migrate_renter_contact_fields()
+migrate_payment_delete_rules()
 
-# Initialize FastAPI app
+
+# Initialize FastAPI application
 app = FastAPI(
     title="Car Rental Management API",
     description="""
     A comprehensive REST API for managing a car rental business.
-    
+
     ## Features
-    
-    * **Cars Management**: Create, read, update, and delete cars
-    * **Renters Management**: Manage renter information
-    * **Rentals Management**: Handle car rentals and returns
-    
-    ## Endpoints
-    
-    * **/cars**: Car operations (CRUD)
-    * **/renters**: Renter operations (CRUD)
-    * **/rentals**: Rental operations (CRUD)
+
+    * Cars management
+    * Renters management
+    * Rentals management
+    * Authentication
+    * Maintenance management
+
+    ## Main endpoints
+
+    * /cars
+    * /renters
+    * /rentals
+    * /auth
+    * /maintenance
     """,
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
 )
+
 
 # Configure CORS
-# Allow your Next.js frontend to make requests
+# Accepts frontend requests opened through localhost or 127.0.0.1
+# regardless of the port used by Minikube.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",  # Next.js default port
-        "http://localhost:3001",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:3001",
-    ],
+    allow_origin_regex=r"^http://(localhost|127\.0\.0\.1)(:\d+)?$",
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods (GET, POST, PUT, DELETE, etc.)
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-# Include routers
+
+# Include API routers
 app.include_router(cars.router)
 app.include_router(renters.router)
 app.include_router(rentals.router)
 app.include_router(auth.router)
 app.include_router(maintenance.router)
+app.include_router(payments.router)
+uploads_dir = Path(__file__).resolve().parent.parent / "uploads"
+uploads_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
 
 
-# Root endpoint
 @app.get("/", tags=["Root"])
 async def root():
     """
-    Root endpoint - API information
+    Root endpoint containing API information.
     """
     return {
         "message": "Welcome to Car Rental Management API",
@@ -78,45 +94,47 @@ async def root():
         "endpoints": {
             "cars": "/cars",
             "renters": "/renters",
-            "rentals": "/rentals"
-        }
+            "rentals": "/rentals",
+            "auth": "/auth",
+            "maintenance": "/maintenance",
+        },
     }
 
 
-# Health check endpoint
 @app.get("/health", tags=["Health"])
 async def health_check():
     """
-    Health check endpoint
+    Health-check endpoint used by Docker and Kubernetes.
     """
     return {
         "status": "healthy",
-        "message": "API is running"
+        "message": "API is running",
     }
 
 
-# Global exception handler
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
     """
-    Global exception handler for unexpected errors
+    Handle unexpected application errors.
     """
+    logger.exception(
+        "Unhandled API error method=%s path=%s",
+        request.method,
+        request.url.path,
+        exc_info=exc,
+    )
     return JSONResponse(
         status_code=500,
-        content={
-            "detail": "Internal server error",
-            "message": str(exc)
-        }
+        content={"detail": "Une erreur interne inattendue est survenue."},
     )
 
 
-# Run the application
 if __name__ == "__main__":
     uvicorn.run(
-        "backend.main:app",
+        "main:app",
         host="0.0.0.0",
         port=8000,
-        reload=True  # Enable auto-reload during development
+        reload=True,
     )
-
-
+# Technical details stay in server logs and are never returned to clients.
+logger = logging.getLogger("cars_rental.api")

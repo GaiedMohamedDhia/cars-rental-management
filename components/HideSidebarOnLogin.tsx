@@ -9,7 +9,7 @@ export default function HideSidebarOnLogin() {
   useEffect(() => {
     const sidebar = document.getElementById('app-sidebar')
     const mobileNav = document.getElementById('app-mobile-nav')
-    if (pathname === '/login') {
+    if (pathname === '/login' || pathname === '/register') {
       if (sidebar) sidebar.style.display = 'none'
       if (mobileNav) mobileNav.style.display = 'none'
     } else {

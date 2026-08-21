@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#111827"/><stop offset="1" stop-color="#0f172a"/></linearGradient>
+    <linearGradient id="car" x1="0" x2="1"><stop stop-color="#2563eb"/><stop offset="1" stop-color="#22d3ee"/></linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <circle cx="400" cy="220" r="150" fill="#1e293b" opacity=".55"/>
+  <path fill="url(#car)" d="M210 283l30-83c8-23 30-38 55-38h210c25 0 47 15 55 38l30 83 35 21v55h-54a50 50 0 01-96 0H325a50 50 0 01-96 0h-54v-55l35-21zm68-73l-23 65h290l-23-65c-3-8-10-13-18-13H296c-8 0-15 5-18 13zm-5 98a25 25 0 100 50 25 25 0 000-50zm254 0a25 25 0 100 50 25 25 0 000-50z"/>
+</svg>

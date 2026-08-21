@@ -1,0 +1,69 @@
+# config.yaml
+#
+# Purpose: Define the future configuration contract without operational values.
+# Responsibilities: Separate project, platform, and experiment settings from future implementation code.
+# Dependencies: Future YAML loader, schema validator, and environment-specific configuration overlays.
+
+project:
+  name: cars-rental
+  output_directory: results
+
+swarm:
+  stack_name: cars-rental
+  backend_service: cars-rental_backend
+  frontend_service: cars-rental_frontend
+  database_service: cars-rental_database
+  health_url: http://127.0.0.1:8000/health
+  frontend_url: http://127.0.0.1:3000
+  expected_replicas: 1
+
+kubernetes:
+  namespace: default
+  backend_deployment: backend
+  frontend_deployment: frontend
+  database_deployment: database
+  database_service: database
+  backend_service: backend
+  frontend_service: frontend
+  local_backend_url: http://127.0.0.1:8001/health
+  port_forward_local_port: 8001
+  port_forward_remote_port: 8000
+  port_forward_startup_timeout_seconds: 60
+  rollout_timeout_seconds: 180
+  pod_ready_timeout_seconds: 180
+  inter_node_network_safe: false
+
+tests:
+  health_timeout_seconds: 180
+  recovery_timeout_seconds: 180
+  request_timeout_seconds: 4
+  polling_interval_seconds: 1
+  repetitions: 3
+  cpu_duration_seconds: 120
+  cpu_workers: 4
+  memory_duration_seconds: 120
+  memory_size_mb: 512
+  degraded_latency_ms: 2000
+  degraded_jitter_ms: 100
+  degraded_duration_seconds: 60
+  network_partition_duration_seconds: 15
+  baseline_duration_seconds: 5
+  toxiproxy_api_port: 18474
+  database_probe_path: /cars
+  database_probe_token_env: RESILIENCE_API_TOKEN
+  authentication_identifier_env: RESILIENCE_TEST_IDENTIFIER
+  authentication_password_env: RESILIENCE_TEST_PASSWORD
+  confirmation_required: true
+
+toxiproxy:
+  api_start_timeout_seconds: 60
+  api_retry_interval_seconds: 2
+  baseline_samples: 10
+  injected_samples: 15
+  recovery_samples: 10
+  latency_ms: 1500
+  latency_jitter_ms: 100
+  network_failure_min_count: 1
+  latency_min_increase_ms: 500
+  latency_min_multiplier: 1.5
+  recovery_timeout_seconds: 180

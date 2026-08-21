@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="190" viewBox="0 0 720 190" role="img" aria-labelledby="title desc">
+  <title id="title">TuniCars+</title>
+  <desc id="desc">Pin de localisation avec voiture minimaliste, TuniCars+ et sous-titre Car Rental Management.</desc>
+  <defs>
+    <linearGradient id="brand" x1="28" y1="18" x2="151" y2="169" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#42F5A7"/>
+      <stop offset=".48" stop-color="#16D9ED"/>
+      <stop offset="1" stop-color="#2864FF"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="190" y1="48" x2="190" y2="124" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset=".45" stop-color="#D8E2EF"/>
+      <stop offset=".72" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#AAB8CB"/>
+    </linearGradient>
+    <linearGradient id="plus" x1="530" y1="66" x2="584" y2="119" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#20D8FF"/>
+      <stop offset="1" stop-color="#386BFF"/>
+    </linearGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="9" result="blur"/>
+      <feFlood flood-color="#16D9ED" flood-opacity=".42"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <g filter="url(#glow)">
+    <path d="M91 13C52 13 21 44 21 83c0 49 70 96 70 96s70-47 70-96c0-39-31-70-70-70Z" fill="url(#brand)"/>
+    <path d="M91 25c-32 0-58 26-58 58 0 34 39 69 58 83 19-14 58-49 58-83 0-32-26-58-58-58Z" fill="#071527" fill-opacity=".94"/>
+    <circle cx="91" cy="82" r="48" fill="none" stroke="url(#brand)" stroke-width="3" opacity=".8"/>
+  </g>
+
+  <g fill="none" stroke="url(#brand)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M54 86h74l-6-19c-2-6-7-10-13-10H73c-6 0-11 4-13 10l-6 19Z" stroke-width="5"/>
+    <path d="M49 86v18c0 5 4 9 9 9h66c5 0 9-4 9-9V86" stroke-width="5"/>
+    <path d="M58 95h15m36 0h15M78 102h26" stroke-width="6"/>
+    <path d="M57 75 48 72m77 3 9-3" stroke-width="5"/>
+  </g>
+  <circle cx="65" cy="111" r="6" fill="#16D9ED"/>
+  <circle cx="117" cy="111" r="6" fill="#2864FF"/>
+
+  <text x="187" y="116" fill="url(#metal)" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="76" font-weight="800" letter-spacing="-3">TuniCars</text>
+  <text x="530" y="116" fill="url(#plus)" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="76" font-weight="800">+</text>
+  <text x="193" y="151" fill="#35D6F4" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15" font-weight="600" letter-spacing="8">CAR RENTAL MANAGEMENT</text>
+</svg>

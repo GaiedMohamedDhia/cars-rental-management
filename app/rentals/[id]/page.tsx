@@ -1,32 +1,62 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 import { rentalsAPI } from '@/lib/api-client'
 import { ReturnCarForm } from '@/components/ReturnCarForm'
-import { notFound } from 'next/navigation'
+import { actualReturnDate, getRentalReturnStatus, getReturnDelay, isReturned, plannedReturnDate } from '@/lib/rental-status'
+import type { Rental } from '@/types'
 
-export default async function RentalDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
-  const result = await rentalsAPI.getById(parseInt(id))
-  
-  if (!result.success || !result.data) {
-    notFound()
+export default function RentalDetailPage() {
+  const params = useParams<{ id: string }>()
+  const [rental, setRental] = useState<Rental | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    const id = Number(params.id)
+    if (!Number.isInteger(id) || id <= 0) {
+      setError('Identifiant de location invalide.')
+      setLoading(false)
+      return
+    }
+    rentalsAPI.getById(id).then((result) => {
+      setRental(result.data || null)
+      setError(result.success ? '' : result.error || 'Location introuvable.')
+      setLoading(false)
+    })
+  }, [params.id])
+
+  if (loading) {
+    return <main className="min-h-full flex-1 bg-gray-50 p-8"><div className="mx-auto h-[520px] max-w-4xl animate-pulse rounded-2xl bg-slate-200" /></main>
   }
-
-  const rental = result.data
-  const isActive = !rental.dateFin
+  if (!rental) {
+    return <main className="min-h-full flex-1 bg-gray-50 p-8"><div className="mx-auto max-w-xl rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">{error}</div></main>
+  }
+  const isActive = !isReturned(rental)
+  const returnStatus = getRentalReturnStatus(rental)
+  const plannedReturn = plannedReturnDate(rental)
+  const actualReturn = actualReturnDate(rental)
   
   // Calculate duration
   const startDate = new Date(rental.dateDebut)
-  const endDate = rental.dateFin ? new Date(rental.dateFin) : new Date()
+  const endDate = actualReturn || new Date()
   const daysRented = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
   const estimatedTotal = daysRented * (rental.car?.prixLocation || 0)
 
   return (
     <div className="flex-1 bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
+        <div className="mb-6 flex items-center justify-between gap-3">
           <Link href="/rentals" className="text-green-600 hover:text-green-700 text-sm font-medium">
             ← Retour aux Locations
           </Link>
+          {isActive ? (
+            <Link href={`/rentals/${rental.id}/edit`} className="rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50">
+              Modifier la location
+            </Link>
+          ) : null}
         </div>
 
         <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
@@ -43,7 +73,7 @@ export default async function RentalDetailPage({ params }: { params: Promise<{ i
                   ? 'bg-yellow-100 text-yellow-800' 
                   : 'bg-green-100 text-green-800'
               }`}>
-                {isActive ? '⏱ Active' : '✓ Terminée'}
+                {returnStatus}
               </span>
             </div>
 
@@ -81,12 +111,21 @@ export default async function RentalDetailPage({ params }: { params: Promise<{ i
                 </div>
               </div>
               
-              {rental.dateFin && (
+              {plannedReturn && (
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="text-xs text-gray-600 mb-1">Date de Fin</div>
+                  <div className="text-xs text-gray-600 mb-1">Retour prévu</div>
                   <div className="text-sm font-bold text-gray-900">
-                    {new Date(rental.dateFin).toLocaleDateString('fr-FR')}
+                    {plannedReturn.toLocaleString('fr-FR')}
                   </div>
+                </div>
+              )}
+              {actualReturn && (
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="text-xs text-gray-600 mb-1">Retour réel</div>
+                  <div className="text-sm font-bold text-gray-900">
+                    {actualReturn.toLocaleString('fr-FR')}
+                  </div>
+                  <div className="mt-1 text-xs text-gray-500">{getReturnDelay(rental).label}</div>
                 </div>
               )}
               
@@ -95,7 +134,7 @@ export default async function RentalDetailPage({ params }: { params: Promise<{ i
                 <div className="text-sm font-bold text-gray-900">{rental.kmDebut.toLocaleString()} km</div>
               </div>
               
-              {rental.kmFin && (
+              {rental.kmFin !== null && rental.kmFin !== undefined && (
                 <div className="bg-gray-50 rounded-lg p-4">
                   <div className="text-xs text-gray-600 mb-1">Kilométrage Fin</div>
                   <div className="text-sm font-bold text-gray-900">{rental.kmFin.toLocaleString()} km</div>
@@ -110,7 +149,7 @@ export default async function RentalDetailPage({ params }: { params: Promise<{ i
                   <div className="text-sm text-green-700 mb-1">Jours Loués</div>
                   <div className="text-2xl font-bold text-green-900">{daysRented}</div>
                 </div>
-                {rental.kmFin && (
+                {rental.kmFin !== null && rental.kmFin !== undefined && (
                   <div>
                     <div className="text-sm text-green-700 mb-1">Distance Parcourue</div>
                     <div className="text-2xl font-bold text-green-900">
