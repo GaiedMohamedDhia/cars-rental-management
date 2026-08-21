@@ -1,0 +1,3 @@
+Timestamp,Session ID,Platform,Scenario,Command,Exit Code,Error Type,Error Message,Suggested Solution
+2026-08-13T20:36:21.902951+00:00,20260813_213310_031fca,swarm,memory,,N/A,StressWorkloadError,Swarm stress container exited with code 137.,Check the environment and platform logs.
+2026-08-13T20:47:57.434084+00:00,20260813_213310_031fca,kubernetes,memory,,N/A,ScenarioFailure,No healthy backend response was observed during the stress test.,Inspect scenario log.

@@ -7,6 +7,12 @@ export interface Renter {
   nom: string
   prenom: string
   adresse: string
+  telephone?: string | null
+  email?: string | null
+  cin?: string | null
+  ville?: string | null
+  photoUrl?: string | null
+  is_active?: boolean
   createdAt: string
   updatedAt: string
   rentals?: import('./rentals').Rental[]
@@ -16,12 +22,22 @@ export interface CreateRenterInput {
   nom: string
   prenom: string
   adresse: string
+  telephone?: string | null
+  email?: string | null
+  cin?: string | null
+  ville?: string | null
+  photoUrl?: string | null
 }
 
 export interface UpdateRenterInput {
   nom?: string
   prenom?: string
   adresse?: string
+  telephone?: string | null
+  email?: string | null
+  cin?: string | null
+  ville?: string | null
+  photoUrl?: string | null
 }
 
 export interface RenterResponse {

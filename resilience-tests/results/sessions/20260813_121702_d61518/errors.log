@@ -1,0 +1,3 @@
+Timestamp,Session ID,Platform,Scenario,Command,Exit Code,Error Type,Error Message,Suggested Solution
+2026-08-13T11:23:13.271917+00:00,20260813_121702_d61518,swarm,memory,docker inspect tunicars-memory-stress-94e04a42,N/A,STRESS_COMMAND_TIMEOUT,Swarm stress container exceeded its scenario deadline.,Check the environment and platform logs.
+2026-08-13T11:34:57.573584+00:00,20260813_121702_d61518,kubernetes,memory,,N/A,StressWorkloadError,Stress pod finished with phase Running.,Inspect the captured pod JSON/logs and Kubernetes events.

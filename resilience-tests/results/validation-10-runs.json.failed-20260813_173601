@@ -1,0 +1,74 @@
+[
+  {
+    "run": 1,
+    "session_id": "20260813_160801_579ea3",
+    "pass": 6,
+    "fail": 0,
+    "skipped": 6,
+    "duration_seconds": 692.41,
+    "charts": 10,
+    "pdf": "YES",
+    "pdf_path": "C:\\pfa IH\\cars-rental-main\\resilience-tests\\results\\sessions\\20260813_160801_579ea3\\report.pdf",
+    "cleanup": "CLEAN"
+  },
+  {
+    "run": 2,
+    "session_id": "20260813_161935_7ab8b4",
+    "pass": 6,
+    "fail": 0,
+    "skipped": 6,
+    "duration_seconds": 692.45,
+    "charts": 10,
+    "pdf": "YES",
+    "pdf_path": "C:\\pfa IH\\cars-rental-main\\resilience-tests\\results\\sessions\\20260813_161935_7ab8b4\\report.pdf",
+    "cleanup": "CLEAN"
+  },
+  {
+    "run": 3,
+    "session_id": "20260813_163108_7f4139",
+    "pass": 6,
+    "fail": 0,
+    "skipped": 6,
+    "duration_seconds": 691.58,
+    "charts": 10,
+    "pdf": "YES",
+    "pdf_path": "C:\\pfa IH\\cars-rental-main\\resilience-tests\\results\\sessions\\20260813_163108_7f4139\\report.pdf",
+    "cleanup": "CLEAN"
+  },
+  {
+    "run": 4,
+    "session_id": "20260813_164240_e04ed7",
+    "pass": 6,
+    "fail": 0,
+    "skipped": 6,
+    "duration_seconds": 691.91,
+    "charts": 10,
+    "pdf": "YES",
+    "pdf_path": "C:\\pfa IH\\cars-rental-main\\resilience-tests\\results\\sessions\\20260813_164240_e04ed7\\report.pdf",
+    "cleanup": "CLEAN"
+  },
+  {
+    "run": 5,
+    "session_id": "20260813_165413_2db8cb",
+    "pass": 6,
+    "fail": 0,
+    "skipped": 6,
+    "duration_seconds": 684.5,
+    "charts": 10,
+    "pdf": "YES",
+    "pdf_path": "C:\\pfa IH\\cars-rental-main\\resilience-tests\\results\\sessions\\20260813_165413_2db8cb\\report.pdf",
+    "cleanup": "CLEAN"
+  },
+  {
+    "run": 6,
+    "session_id": "20260813_170538_aa8092",
+    "pass": 6,
+    "fail": 0,
+    "skipped": 6,
+    "duration_seconds": 685.74,
+    "charts": 10,
+    "pdf": "YES",
+    "pdf_path": "C:\\pfa IH\\cars-rental-main\\resilience-tests\\results\\sessions\\20260813_170538_aa8092\\report.pdf",
+    "cleanup": "CLEAN"
+  }
+]

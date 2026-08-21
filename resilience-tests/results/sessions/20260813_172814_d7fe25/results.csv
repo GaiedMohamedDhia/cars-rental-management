@@ -1,0 +1,4 @@
+Test Number,Session ID,Timestamp,Platform,Scenario,Status,Detection Time (s),Recovery Time (s),Recovery Required,Recovery Success,Average Response Time (ms),P95 Response Time (ms),Maximum Response Time (ms),HTTP Success,HTTP Failures,Availability (%),CPU (%),Memory (MB),Error Count,Error Message,Skip Reason,Notes
+1,20260813_172814_d7fe25,2026-08-13T16:30:37.783303+00:00,kubernetes,cpu,PASS,N/A,N/A,False,Not Required,20.911,32.364,116.926,124,0,100.0,63.5,7717.97,0,,,Bounded stress workload completed; final backend health: healthy.
+2,20260813_172814_d7fe25,2026-08-13T16:33:03.010844+00:00,kubernetes,cpu,PASS,N/A,N/A,False,Not Required,20.846,34.939,192.956,123,0,100.0,64.0,7509.31,0,,,Bounded stress workload completed; final backend health: healthy.
+3,20260813_172814_d7fe25,2026-08-13T16:35:30.293780+00:00,kubernetes,cpu,PASS,N/A,N/A,False,Not Required,19.209,29.349,62.664,123,0,100.0,52.1,7651.91,0,,,Bounded stress workload completed; final backend health: healthy.

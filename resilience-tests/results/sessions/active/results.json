@@ -1,0 +1,66 @@
+{
+  "session_id": "active",
+  "state": "RUNNING",
+  "started_at": "2026-08-13T00:09:56.057067+00:00",
+  "finished_at": "2026-08-13T00:09:56.146399+00:00",
+  "platforms": [
+    "Docker Swarm"
+  ],
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0
+  },
+  "results": [
+    {
+      "session_id": "active",
+      "timestamp_end": "2026-08-13T10:00:00Z",
+      "platform": "swarm",
+      "scenario": "cpu",
+      "repetition": 1,
+      "status": "PASS",
+      "detection_time_seconds": "N/A",
+      "recovery_time_seconds": "N/A",
+      "recovery_required": false,
+      "recovery_success": "Not Required",
+      "average_response_time_ms": 12.5,
+      "p95_response_time_ms": 15,
+      "maximum_response_time_ms": 18,
+      "http_success_count": 3,
+      "http_failure_count": 0,
+      "availability_percent": 100,
+      "maximum_cpu_percent": 25,
+      "maximum_memory_mb": 128,
+      "error_count": 0,
+      "error_message": "",
+      "skip_reason": "",
+      "notes": "measured"
+    },
+    {
+      "session_id": "active",
+      "timestamp_end": "2026-08-13T10:00:00Z",
+      "platform": "swarm",
+      "scenario": "memory",
+      "repetition": 1,
+      "status": "PASS",
+      "detection_time_seconds": "N/A",
+      "recovery_time_seconds": "N/A",
+      "recovery_required": false,
+      "recovery_success": "Not Required",
+      "average_response_time_ms": 12.5,
+      "p95_response_time_ms": 15,
+      "maximum_response_time_ms": 18,
+      "http_success_count": 3,
+      "http_failure_count": 0,
+      "availability_percent": 100,
+      "maximum_cpu_percent": 25,
+      "maximum_memory_mb": 128,
+      "error_count": 0,
+      "error_message": "",
+      "skip_reason": "",
+      "notes": "measured"
+    }
+  ]
+}

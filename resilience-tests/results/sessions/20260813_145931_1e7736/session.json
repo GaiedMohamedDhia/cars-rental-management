@@ -1,0 +1,11 @@
+{
+  "session_id": "20260813_145931_1e7736",
+  "state": "COMPLETED",
+  "started_at": "2026-08-13T13:59:31.962990+00:00",
+  "finished_at": "2026-08-13T14:13:07.885288+00:00",
+  "platforms": [
+    "Docker Swarm",
+    "Kubernetes"
+  ],
+  "total": 12
+}

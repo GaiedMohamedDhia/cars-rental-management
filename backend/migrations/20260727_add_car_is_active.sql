@@ -1,0 +1,8 @@
+BEGIN;
+
+ALTER TABLE cars
+    ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT TRUE;
+
+CREATE INDEX IF NOT EXISTS ix_cars_is_active ON cars (is_active);
+
+COMMIT;

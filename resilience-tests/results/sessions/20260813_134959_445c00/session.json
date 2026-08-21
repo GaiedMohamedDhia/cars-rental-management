@@ -1,0 +1,11 @@
+{
+  "session_id": "20260813_134959_445c00",
+  "state": "CANCELLED",
+  "started_at": "2026-08-13T12:49:59.419886+00:00",
+  "finished_at": "2026-08-13T13:03:57.357671+00:00",
+  "platforms": [
+    "Docker Swarm",
+    "Kubernetes"
+  ],
+  "total": 12
+}

@@ -1,14 +1,35 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import { RentalForm } from '@/components/RentalForm'
 import { carsAPI, rentersAPI } from '@/lib/api-client'
+import type { Car, Renter } from '@/types'
 
-export default async function NewRentalPage() {
-  const [carsResult, rentersResult] = await Promise.all([
-    carsAPI.getAll(true), // true = available only
-    rentersAPI.getAll()
-  ])
+export default function NewRentalPage() {
+  const [cars, setCars] = useState<Car[]>([])
+  const [renters, setRenters] = useState<Renter[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
-  const cars = carsResult.data || []
-  const renters = rentersResult.data || []
+  useEffect(() => {
+    async function loadFormData() {
+      const [carsResult, rentersResult] = await Promise.all([
+        carsAPI.getAll(true),
+        rentersAPI.getAll(),
+      ])
+      setCars(carsResult.data || [])
+      setRenters(rentersResult.data || [])
+      setError(
+        !carsResult.success
+          ? carsResult.error || 'Impossible de charger les voitures disponibles.'
+          : !rentersResult.success
+            ? rentersResult.error || 'Impossible de charger les locataires.'
+            : '',
+      )
+      setLoading(false)
+    }
+    void loadFormData()
+  }, [])
 
   return (
     <div className="flex-1 bg-gray-50">
@@ -19,7 +40,15 @@ export default async function NewRentalPage() {
         </div>
 
         <div className="bg-white rounded-xl shadow-md p-8">
-          <RentalForm cars={cars} renters={renters} />
+          {loading ? (
+            <div className="h-80 animate-pulse rounded-xl bg-slate-100" />
+          ) : error ? (
+            <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+              {error}
+            </div>
+          ) : (
+            <RentalForm cars={cars} renters={renters} />
+          )}
         </div>
       </div>
     </div>

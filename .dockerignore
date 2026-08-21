@@ -43,6 +43,10 @@ yarn-error.log*
 # Testing
 coverage
 .nyc_output
+.pytest_cache
+.pytest-tmp
+resilience-tests
+*.zip
 
 # Database
 *.db
@@ -55,10 +59,9 @@ prisma/dev.db
 DOCKER_README.md
 
 # Environment files (we use build args instead)
+.env
 .env.local
 .env.development
 .env.test
 
-# Do NOT ignore these - needed for build
-# .env (contains NEXT_PUBLIC_* variables)
-# prisma/schema.prisma
+# Runtime configuration is injected by Docker Compose or Kubernetes.

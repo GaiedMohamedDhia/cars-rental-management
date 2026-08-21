@@ -33,6 +33,25 @@ export type {
   DeleteRentalResponse,
 } from './rentals'
 
+// Auth
+export type {
+  User,
+  RegisterInput,
+  LoginInput,
+  AuthResponse,
+  UpdateUserInput,
+} from './auth'
+
+export type { Payment, CreatePaymentInput, UpdatePaymentInput } from './payments'
+
+// Maintenance
+export type {
+  Maintenance,
+  CreateMaintenanceInput,
+  UpdateMaintenanceInput,
+  MaintenancesListResponse,
+} from './maintenance'
+
 // API
 export type {
   ApiResponse,
@@ -43,8 +62,6 @@ export type {
   SearchParams,
   FilterParams,
 } from './api'
-
-
 
 
 

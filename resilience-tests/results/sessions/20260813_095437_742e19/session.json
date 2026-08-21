@@ -1,0 +1,10 @@
+{
+  "session_id": "20260813_095437_742e19",
+  "state": "COMPLETED",
+  "started_at": "2026-08-13T08:54:37.325210+00:00",
+  "finished_at": "2026-08-13T08:54:58.822738+00:00",
+  "platforms": [
+    "Kubernetes"
+  ],
+  "total": 1
+}

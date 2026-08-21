@@ -1,0 +1,3 @@
+Timestamp,Session ID,Platform,Scenario,Command,Exit Code,Error Type,Error Message,Suggested Solution
+2026-08-13T22:03:47.821823+00:00,20260813_225853_1457cb,swarm,network-partition,,N/A,AUTH_SERVER_ERROR,Resilience-test authentication failed with HTTP 500.,Verify RESILIENCE_TEST_IDENTIFIER and RESILIENCE_TEST_PASSWORD; tokens and passwords are never logged.
+2026-08-13T22:03:53.653408+00:00,20260813_225853_1457cb,swarm,latency,,N/A,AUTH_SERVER_ERROR,Resilience-test authentication failed with HTTP 500.,Verify RESILIENCE_TEST_IDENTIFIER and RESILIENCE_TEST_PASSWORD; tokens and passwords are never logged.

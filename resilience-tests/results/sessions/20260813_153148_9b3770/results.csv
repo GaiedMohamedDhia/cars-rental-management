@@ -1,0 +1,2 @@
+Test Number,Session ID,Timestamp,Platform,Scenario,Status,Detection Time (s),Recovery Time (s),Recovery Required,Recovery Success,Average Response Time (ms),P95 Response Time (ms),Maximum Response Time (ms),HTTP Success,HTTP Failures,Availability (%),CPU (%),Memory (MB),Error Count,Error Message,Skip Reason,Notes
+1,20260813_153148_9b3770,2026-08-13T14:33:58.267078+00:00,swarm,cpu,PASS,N/A,N/A,False,Not Required,10.013,19.654,32.879,121,0,100.0,90.1,7264.56,0,,,Bounded stress workload completed; final backend health: healthy.

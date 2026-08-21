@@ -1,0 +1,7 @@
+run,session_id,pass,fail,skipped,duration_seconds,charts,pdf,pdf_path,cleanup
+1,20260813_160801_579ea3,6,0,6,692.41,10,YES,C:\pfa IH\cars-rental-main\resilience-tests\results\sessions\20260813_160801_579ea3\report.pdf,CLEAN
+2,20260813_161935_7ab8b4,6,0,6,692.45,10,YES,C:\pfa IH\cars-rental-main\resilience-tests\results\sessions\20260813_161935_7ab8b4\report.pdf,CLEAN
+3,20260813_163108_7f4139,6,0,6,691.58,10,YES,C:\pfa IH\cars-rental-main\resilience-tests\results\sessions\20260813_163108_7f4139\report.pdf,CLEAN
+4,20260813_164240_e04ed7,6,0,6,691.91,10,YES,C:\pfa IH\cars-rental-main\resilience-tests\results\sessions\20260813_164240_e04ed7\report.pdf,CLEAN
+5,20260813_165413_2db8cb,6,0,6,684.5,10,YES,C:\pfa IH\cars-rental-main\resilience-tests\results\sessions\20260813_165413_2db8cb\report.pdf,CLEAN
+6,20260813_170538_aa8092,6,0,6,685.74,10,YES,C:\pfa IH\cars-rental-main\resilience-tests\results\sessions\20260813_170538_aa8092\report.pdf,CLEAN

@@ -1,0 +1,2 @@
+Timestamp,Session ID,Platform,Scenario,Command,Exit Code,Error Type,Error Message,Suggested Solution
+2026-08-13T14:28:29.000220+00:00,20260813_152822_301286,swarm,cpu,,N/A,StressWorkloadError,Swarm stress container exited with code 1.,Check the environment and platform logs.

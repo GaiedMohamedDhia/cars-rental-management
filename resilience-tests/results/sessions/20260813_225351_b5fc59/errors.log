@@ -1,0 +1,2 @@
+Timestamp,Session ID,Platform,Scenario,Command,Exit Code,Error Type,Error Message,Suggested Solution
+2026-08-13T21:54:09.476784+00:00,20260813_225351_b5fc59,kubernetes,network-partition,,N/A,AUTH_INVALID_CREDENTIALS,Resilience-test authentication failed with HTTP 401.,Verify RESILIENCE_TEST_IDENTIFIER and RESILIENCE_TEST_PASSWORD; tokens and passwords are never logged.

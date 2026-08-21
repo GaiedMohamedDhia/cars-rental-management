@@ -1,0 +1,2 @@
+Timestamp,Session ID,Platform,Scenario,Command,Exit Code,Error Type,Error Message,Suggested Solution
+now,2026-08-13_00-49-43_140101,swarm,container-kill,,N/A,ScenarioFailure,,Inspect the scenario log.

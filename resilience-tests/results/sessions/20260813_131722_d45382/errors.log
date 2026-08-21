@@ -1,0 +1,2 @@
+Timestamp,Session ID,Platform,Scenario,Command,Exit Code,Error Type,Error Message,Suggested Solution
+2026-08-13T12:40:55.629644+00:00,20260813_131722_d45382,kubernetes,memory,,N/A,StressWorkloadError,Stress pod finished with phase Running.,Inspect the captured pod JSON/logs and Kubernetes events.

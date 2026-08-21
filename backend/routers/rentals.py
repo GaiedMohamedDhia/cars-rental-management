@@ -2,20 +2,24 @@
 Rental Routes - API endpoints for rental management
 """
 from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 from typing import List
 
 try:
-    from .. import crud, schemas
+    from .. import crud, models, schemas
     from ..database import get_db
+    from ..security import get_current_user
 except ImportError:
-    import crud, schemas
+    import crud, models, schemas
     from database import get_db
+    from security import get_current_user
 
 router = APIRouter(
     prefix="/rentals",
     tags=["Rentals"],
-    responses={404: {"description": "Rental not found"}}
+    responses={404: {"description": "Rental not found"}},
+    dependencies=[Depends(get_current_user)],
 )
 
 
@@ -101,6 +105,18 @@ def create_rental(rental: schemas.RentalCreate, db: Session = Depends(get_db)):
         return crud.create_rental(db=db, rental=rental)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="La location n’a pas pu être créée à cause de données en conflit.",
+        ) from exc
+    except SQLAlchemyError as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail="L’enregistrement de la location a échoué. Aucune donnée n’a été modifiée.",
+        ) from exc
 
 
 @router.put("/{rental_id}", response_model=schemas.RentalResponse)
@@ -119,7 +135,23 @@ def update_rental(
     
     When dateFin and kmFin are provided, the car will be set back to 'available' (etat = 0)
     """
-    updated_rental = crud.update_rental(db=db, rental_id=rental_id, rental_update=rental_update)
+    try:
+        updated_rental = crud.update_rental(db=db, rental_id=rental_id, rental_update=rental_update)
+    except ValueError as exc:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="La modification de la location entre en conflit avec les données existantes.",
+        ) from exc
+    except SQLAlchemyError as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail="La modification de la location a échoué. Aucune donnée n’a été modifiée.",
+        ) from exc
     if updated_rental is None:
         raise HTTPException(status_code=404, detail="Rental not found")
     return updated_rental
@@ -134,9 +166,28 @@ def delete_rental(rental_id: int, db: Session = Depends(get_db)):
     
     If the rental is active, the car will be set back to 'available'
     """
-    success = crud.delete_rental(db=db, rental_id=rental_id)
+    rental = crud.get_rental(db, rental_id=rental_id)
+    if rental is None:
+        raise HTTPException(status_code=404, detail="Rental not found")
+    try:
+        success = crud.delete_rental(db=db, rental_id=rental_id)
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="Impossible de supprimer cette location car elle possède des relations.",
+        ) from exc
+    except SQLAlchemyError as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail="La suppression de la location a échoué. Aucune donnée n’a été modifiée.",
+        ) from exc
     if not success:
         raise HTTPException(status_code=404, detail="Rental not found")
-    return {"message": f"Rental {rental_id} deleted successfully"}
-
-
+    return {
+        "message": (
+            "Location et paiements associés supprimés. "
+            "La voiture est de nouveau disponible."
+        )
+    }

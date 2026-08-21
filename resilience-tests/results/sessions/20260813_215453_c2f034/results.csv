@@ -1,0 +1,3 @@
+Test Number,Session ID,Timestamp,Platform,Scenario,Status,Detection Time (s),Recovery Time (s),Recovery Required,Recovery Success,Average Response Time (ms),P95 Response Time (ms),Maximum Response Time (ms),HTTP Success,HTTP Failures,Availability (%),CPU (%),Memory (MB),Error Count,Error Message,Skip Reason,Notes
+1,20260813_215453_c2f034,2026-08-13T21:47:28.634385+00:00,swarm,memory,FAIL,N/A,N/A,N/A,N/A,38806.074,381.94,3059598.907,78,1,98.73,94.1,7747.14,1,Swarm stress container exceeded its scenario deadline.,,
+2,20260813_215453_c2f034,2026-08-13T21:52:52.191832+00:00,swarm,memory,FAIL,N/A,N/A,N/A,N/A,12.928,21.619,68.633,296,0,100.0,78.4,7788.98,1,Swarm stress container exceeded its scenario deadline.,,

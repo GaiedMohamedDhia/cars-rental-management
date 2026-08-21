@@ -1,0 +1,2 @@
+Test Number,Session ID,Timestamp,Platform,Scenario,Status,Detection Time (s),Recovery Time (s),Recovery Required,Recovery Success,Average Response Time (ms),P95 Response Time (ms),Maximum Response Time (ms),HTTP Success,HTTP Failures,Availability (%),CPU (%),Memory (MB),Error Count,Error Message,Skip Reason,Notes
+1,20260813_135332_745426,2026-08-13T12:56:51.593339+00:00,kubernetes,memory,PASS,63.25,12.266,True,True,1914.534,4026.552,44367.437,38,24,61.29,95.7,7729.45,0,,,Bounded stress workload completed; final backend health: healthy.

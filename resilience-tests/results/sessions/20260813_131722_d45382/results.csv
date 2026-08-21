@@ -1,0 +1,2 @@
+Test Number,Session ID,Timestamp,Platform,Scenario,Status,Detection Time (s),Recovery Time (s),Recovery Required,Recovery Success,Average Response Time (ms),P95 Response Time (ms),Maximum Response Time (ms),HTTP Success,HTTP Failures,Availability (%),CPU (%),Memory (MB),Error Count,Error Message,Skip Reason,Notes
+1,20260813_131722_d45382,2026-08-13T12:40:55.629644+00:00,kubernetes,memory,FAIL,N/A,N/A,N/A,N/A,107.112,35.66,3886.221,69,1,98.57,82.8,7878.52,1,Stress pod finished with phase Running.,,

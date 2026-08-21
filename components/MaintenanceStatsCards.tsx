@@ -1,58 +1,70 @@
-import { motion } from "framer-motion";
-import { Wrench, Droplet, FileText, Car } from "lucide-react";
+import {
+  AlertTriangle,
+  Car,
+  CircleDollarSign,
+  CircleCheck,
+  Clock3,
+  Droplet,
+  FileWarning,
+  Wrench,
+} from "lucide-react";
 
-const stats = [
-  {
-    label: "Maintenances Totales",
-    value: 3,
-    icon: <Wrench className="text-blue-600" size={28} />,
-    bg: "bg-white dark:bg-gray-900",
-    border: "border-blue-100 dark:border-blue-800",
-    hover: "hover:shadow-blue-200 hover:-translate-y-1",
-  },
-  {
-    label: "Vidanges Proches",
-    value: 5,
-    icon: <Droplet className="text-yellow-500" size={28} />,
-    bg: "bg-white dark:bg-gray-900",
-    border: "border-yellow-100 dark:border-yellow-800",
-    hover: "hover:shadow-yellow-200 hover:-translate-y-1",
-  },
-  {
-    label: "Assurances Expirées",
-    value: 2,
-    icon: <FileText className="text-red-500" size={28} />,
-    bg: "bg-red-50 dark:bg-red-900",
-    border: "border-red-200 dark:border-red-800",
-    hover: "hover:shadow-red-200 hover:-translate-y-1",
-  },
-  {
-    label: "Contrôles Techniques",
-    value: 3,
-    icon: <Car className="text-purple-600" size={28} />,
-    bg: "bg-white dark:bg-gray-900",
-    border: "border-purple-100 dark:border-purple-800",
-    hover: "hover:shadow-purple-200 hover:-translate-y-1",
-  },
-];
+type StatCard = {
+  label: string;
+  value: string | number;
+  tone: string;
+  icon:
+    | "wrench"
+    | "droplet"
+    | "insurance"
+    | "car"
+    | "completed"
+    | "progress"
+    | "late"
+    | "cost";
+};
 
-export default function MaintenanceStatsCards() {
+const iconMap = {
+  wrench: Wrench,
+  droplet: Droplet,
+  insurance: FileWarning,
+  car: Car,
+  completed: CircleCheck,
+  progress: Clock3,
+  late: AlertTriangle,
+  cost: CircleDollarSign,
+};
+
+export default function MaintenanceStatsCards({ stats = [] }: { stats?: StatCard[] }) {
+  if (stats.length === 0) {
+    return null;
+  }
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {stats.map((stat) => (
-        <motion.div
-          key={stat.label}
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.98 }}
-          className={`rounded-2xl border ${stat.bg} ${stat.border} p-6 shadow-md transition-all duration-200 ${stat.hover} cursor-pointer flex items-center gap-4`}
-        >
-          <div className="flex-shrink-0">{stat.icon}</div>
-          <div>
-            <div className="text-2xl font-bold mb-1">{stat.value}</div>
-            <div className="text-gray-600 dark:text-gray-300 text-sm font-medium">{stat.label}</div>
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-7">
+      {stats.map((stat) => {
+        const Icon = iconMap[stat.icon];
+
+        return (
+          <div
+            key={stat.label}
+            className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0c1729] p-4 text-white shadow-lg shadow-black/10 transition duration-300 hover:-translate-y-0.5 hover:border-white/20"
+          >
+            <div className={`absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r ${stat.tone}`} />
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="text-2xl font-black tracking-tight">{stat.value}</div>
+                <div className="mt-1 text-xs font-semibold leading-tight text-slate-400 sm:text-sm">
+                  {stat.label}
+                </div>
+              </div>
+              <div className={`rounded-xl bg-gradient-to-br ${stat.tone} p-2.5 shadow-lg`}>
+                <Icon size={20} className="text-white" />
+              </div>
+            </div>
           </div>
-        </motion.div>
-      ))}
+        );
+      })}
     </div>
   );
 }

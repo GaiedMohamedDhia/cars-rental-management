@@ -1,0 +1,7 @@
+Test Number,Session ID,Timestamp,Platform,Scenario,Status,Detection Time (s),Recovery Time (s),Recovery Required,Recovery Success,Average Response Time (ms),P95 Response Time (ms),Maximum Response Time (ms),HTTP Success,HTTP Failures,Availability (%),CPU (%),Memory (MB),Error Count,Error Message,Skip Reason,Notes
+1,2026-08-13_00-49-43_140101,now,swarm,container-kill,FAIL,N/A,N/A,N/A,N/A,Not Measured,Not Measured,Not Measured,0,0,Not Measured,Not Measured,Not Measured,0,,,
+2,2026-08-13_00-49-43_140101,now,swarm,node-failure,PASS,N/A,N/A,N/A,N/A,Not Measured,Not Measured,Not Measured,0,0,Not Measured,Not Measured,Not Measured,0,,,
+3,2026-08-13_00-49-43_140101,now,swarm,cpu,PASS,N/A,N/A,N/A,N/A,Not Measured,Not Measured,Not Measured,0,0,Not Measured,Not Measured,Not Measured,0,,,
+4,2026-08-13_00-49-43_140101,now,swarm,memory,PASS,N/A,N/A,N/A,N/A,Not Measured,Not Measured,Not Measured,0,0,Not Measured,Not Measured,Not Measured,0,,,
+5,2026-08-13_00-49-43_140101,now,swarm,network-partition,PASS,N/A,N/A,N/A,N/A,Not Measured,Not Measured,Not Measured,0,0,Not Measured,Not Measured,Not Measured,0,,,
+6,2026-08-13_00-49-43_140101,now,swarm,latency,PASS,N/A,N/A,N/A,N/A,Not Measured,Not Measured,Not Measured,0,0,Not Measured,Not Measured,Not Measured,0,,,

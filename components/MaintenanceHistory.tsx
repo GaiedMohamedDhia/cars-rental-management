@@ -1,60 +1,45 @@
-import { Wrench, Calendar, Euro, Building2, CheckCircle } from "lucide-react";
-import CarAvatar from "./CarAvatar";
+type HistoryItem = {
+  id: string | number;
+  car: string;
+  type: string;
+  date: string;
+  cost: string;
+  garage: string;
+  status: string;
+};
 
-const repairs = [
-  {
-    car: "Toyota Yaris",
-    type: "Freins",
-    date: "2024-04-10",
-    cost: 320,
-    garage: "Garage Central",
-    status: "Terminé",
-  },
-  {
-    car: "Clio 4",
-    type: "Pare-brise",
-    date: "2024-03-22",
-    cost: 180,
-    garage: "AutoGlass+",
-    status: "Terminé",
-  },
-  {
-    car: "Hyundai i20",
-    type: "Pneus",
-    date: "2024-02-15",
-    cost: 400,
-    garage: "PneuPro",
-    status: "Terminé",
-  },
-];
+export default function MaintenanceHistory({ items = [] }: { items?: HistoryItem[] }) {
+  if (items.length === 0) {
+    return (
+      <div className="rounded-2xl border border-white/10 bg-[#0c1729] p-5 text-sm text-slate-400 shadow-xl">
+        Aucune réparation terminée à afficher.
+      </div>
+    );
+  }
 
-export default function MaintenanceHistory() {
   return (
-    <div className="mt-8">
-      <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><Wrench size={22} className="text-blue-600" /> Historique Réparations</h2>
-      <ol className="relative border-l-2 border-[var(--border)] ml-4">
-        {repairs.map((r, i) => (
-          <li key={i} className="mb-8 ml-6">
-            <span className="absolute -left-4 flex items-center justify-center w-8 h-8 bg-[rgba(99,102,241,0.08)] rounded-full ring-2 ring-[var(--border)]">
-              <CheckCircle className="text-green-400" size={16} />
-            </span>
-            <div className="flex flex-col md:flex-row md:items-center md:gap-6">
-              <div className="flex items-center gap-3">
-                <CarAvatar alt={r.car} />
-                <div className="font-semibold text-white">{r.car}</div>
+    <div className="rounded-2xl border border-white/10 bg-[#0c1729] p-5 shadow-xl">
+      <h2 className="mb-4 text-base font-bold text-white">Historique des réparations</h2>
+      <ol className="relative ml-3 border-l-2 border-white/10">
+        {items.map((item) => (
+          <li key={item.id} className="relative mb-3 ml-5 last:mb-0">
+            <span className="absolute -left-[26px] top-4 h-3 w-3 rounded-full border-2 border-emerald-400 bg-[#0c1729]" />
+            <div className="rounded-xl border border-white/5 bg-white/[0.025] px-4 py-3 transition hover:bg-white/[0.045]">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <div className="font-semibold text-white">{item.car}</div>
+                  <div className="mt-1 text-sm text-slate-400">Type : {item.type}</div>
+                </div>
+                <div className="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+                  <span>{item.date}</span>
+                  <span className="font-medium text-white">{item.cost}</span>
+                  <span>{item.garage}</span>
+                  <span className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
+                    {item.status}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300 text-sm">
-                <Calendar size={16} /> {r.date}
-              </div>
-              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300 text-sm">
-                <Euro size={16} /> {r.cost} TND
-              </div>
-              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300 text-sm">
-                <Building2 size={16} /> {r.garage}
-              </div>
-              <span className="ml-auto px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold border border-green-300">{r.status}</span>
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">Type : {r.type}</div>
           </li>
         ))}
       </ol>

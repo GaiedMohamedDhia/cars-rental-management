@@ -1,0 +1,2 @@
+Test Number,Session ID,Timestamp,Platform,Scenario,Status,Detection Time (s),Recovery Time (s),Recovery Required,Recovery Success,Average Response Time (ms),P95 Response Time (ms),Maximum Response Time (ms),HTTP Success,HTTP Failures,Availability (%),CPU (%),Memory (MB),Error Count,Error Message,Skip Reason,Notes
+1,20260813_225351_b5fc59,2026-08-13T21:54:09.476784+00:00,kubernetes,network-partition,FAIL,N/A,N/A,N/A,N/A,Not Measured,Not Measured,Not Measured,0,0,Not Measured,Not Measured,Not Measured,1,Resilience-test authentication failed with HTTP 401.,,

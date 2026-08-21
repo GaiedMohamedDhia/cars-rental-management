@@ -1,0 +1,2 @@
+Timestamp,Session ID,Platform,Scenario,Command,Exit Code,Error Type,Error Message,Suggested Solution
+2026-08-13T14:48:11.842800+00:00,20260813_153659_7b55ee,swarm,cpu,docker inspect tunicars-cpu-stress-786e94ff,N/A,STRESS_COMMAND_TIMEOUT,Swarm stress container exceeded its scenario deadline.,Check the environment and platform logs.

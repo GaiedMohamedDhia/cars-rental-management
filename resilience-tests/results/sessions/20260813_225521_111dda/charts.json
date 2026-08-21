@@ -1,0 +1,16 @@
+{
+  "session_id": "20260813_225521_111dda",
+  "status": "Generated",
+  "generated_at": "2026-08-13T22:56:46.960041+01:00",
+  "count": 8,
+  "files": [
+    "status_summary.png",
+    "platform_comparison.png",
+    "detection_time.png",
+    "recovery_time.png",
+    "response_time.png",
+    "p95_response_time.png",
+    "availability.png",
+    "http_failures.png"
+  ]
+}

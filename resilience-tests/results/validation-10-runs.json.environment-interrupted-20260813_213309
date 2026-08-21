@@ -1,0 +1,110 @@
+[
+  {
+    "run": 1,
+    "session_id": "20260813_173602_ca92c8",
+    "pass": 6,
+    "fail": 0,
+    "skipped": 6,
+    "duration_seconds": 684.67,
+    "charts": 10,
+    "pdf": "YES",
+    "pdf_path": "C:\\pfa IH\\cars-rental-main\\resilience-tests\\results\\sessions\\20260813_173602_ca92c8\\report.pdf",
+    "cleanup": "CLEAN"
+  },
+  {
+    "run": 2,
+    "session_id": "20260813_174727_c6cfe1",
+    "pass": 6,
+    "fail": 0,
+    "skipped": 6,
+    "duration_seconds": 671.49,
+    "charts": 10,
+    "pdf": "YES",
+    "pdf_path": "C:\\pfa IH\\cars-rental-main\\resilience-tests\\results\\sessions\\20260813_174727_c6cfe1\\report.pdf",
+    "cleanup": "CLEAN"
+  },
+  {
+    "run": 3,
+    "session_id": "20260813_175839_f25ee3",
+    "pass": 6,
+    "fail": 0,
+    "skipped": 6,
+    "duration_seconds": 670.45,
+    "charts": 10,
+    "pdf": "YES",
+    "pdf_path": "C:\\pfa IH\\cars-rental-main\\resilience-tests\\results\\sessions\\20260813_175839_f25ee3\\report.pdf",
+    "cleanup": "CLEAN"
+  },
+  {
+    "run": 4,
+    "session_id": "20260813_180950_214cd0",
+    "pass": 6,
+    "fail": 0,
+    "skipped": 6,
+    "duration_seconds": 669.8,
+    "charts": 10,
+    "pdf": "YES",
+    "pdf_path": "C:\\pfa IH\\cars-rental-main\\resilience-tests\\results\\sessions\\20260813_180950_214cd0\\report.pdf",
+    "cleanup": "CLEAN"
+  },
+  {
+    "run": 5,
+    "session_id": "20260813_182100_3212f4",
+    "pass": 6,
+    "fail": 0,
+    "skipped": 6,
+    "duration_seconds": 671.53,
+    "charts": 10,
+    "pdf": "YES",
+    "pdf_path": "C:\\pfa IH\\cars-rental-main\\resilience-tests\\results\\sessions\\20260813_182100_3212f4\\report.pdf",
+    "cleanup": "CLEAN"
+  },
+  {
+    "run": 6,
+    "session_id": "20260813_183212_b0e4c3",
+    "pass": 6,
+    "fail": 0,
+    "skipped": 6,
+    "duration_seconds": 671.47,
+    "charts": 10,
+    "pdf": "YES",
+    "pdf_path": "C:\\pfa IH\\cars-rental-main\\resilience-tests\\results\\sessions\\20260813_183212_b0e4c3\\report.pdf",
+    "cleanup": "CLEAN"
+  },
+  {
+    "run": 7,
+    "session_id": "20260813_184324_c2a886",
+    "pass": 6,
+    "fail": 0,
+    "skipped": 6,
+    "duration_seconds": 671.52,
+    "charts": 10,
+    "pdf": "YES",
+    "pdf_path": "C:\\pfa IH\\cars-rental-main\\resilience-tests\\results\\sessions\\20260813_184324_c2a886\\report.pdf",
+    "cleanup": "CLEAN"
+  },
+  {
+    "run": 8,
+    "session_id": "20260813_185436_f282ef",
+    "pass": 6,
+    "fail": 0,
+    "skipped": 6,
+    "duration_seconds": 671.41,
+    "charts": 10,
+    "pdf": "YES",
+    "pdf_path": "C:\\pfa IH\\cars-rental-main\\resilience-tests\\results\\sessions\\20260813_185436_f282ef\\report.pdf",
+    "cleanup": "CLEAN"
+  },
+  {
+    "run": 9,
+    "session_id": "20260813_190548_7f58a6",
+    "pass": 6,
+    "fail": 0,
+    "skipped": 6,
+    "duration_seconds": 671.19,
+    "charts": 10,
+    "pdf": "YES",
+    "pdf_path": "C:\\pfa IH\\cars-rental-main\\resilience-tests\\results\\sessions\\20260813_190548_7f58a6\\report.pdf",
+    "cleanup": "CLEAN"
+  }
+]

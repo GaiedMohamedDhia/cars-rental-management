@@ -1,0 +1,11 @@
+{
+  "session_id": "20260813_032934_670b42",
+  "state": "FAILED",
+  "started_at": "2026-08-13T02:29:34.169669+00:00",
+  "finished_at": "2026-08-13T07:55:10.819570+00:00",
+  "platforms": [
+    "Docker Swarm",
+    "Kubernetes"
+  ],
+  "total": 12
+}

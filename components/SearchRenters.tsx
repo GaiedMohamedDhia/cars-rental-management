@@ -17,7 +17,7 @@ function SearchRentersInner() {
     } else {
       params.delete('search')
     }
-    router.push(`/renters?${params.toString()}`)
+    router.push(`/locataires?${params.toString()}`)
   }
 
   return (
@@ -40,7 +40,7 @@ function SearchRentersInner() {
           type="button"
           onClick={() => {
             setSearch('')
-            router.push('/renters')
+            router.push('/locataires')
           }}
           className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
         >

@@ -29,7 +29,7 @@ export function ReturnCarForm({ rental }: ReturnCarFormProps) {
     const montantTotal = days * (rental.car?.prixLocation || 0)
 
     const result = await rentalsAPI.update(rental.id, {
-      dateFin: endDate.toISOString(),
+      dateRetourReelle: endDate.toISOString(),
       kmFin,
       montantTotal
     })

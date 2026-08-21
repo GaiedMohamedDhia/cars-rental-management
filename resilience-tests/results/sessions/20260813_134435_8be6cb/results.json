@@ -1,0 +1,17 @@
+{
+  "session_id": "20260813_134435_8be6cb",
+  "state": "STARTING",
+  "started_at": "2026-08-13T12:44:35.223970+00:00",
+  "finished_at": null,
+  "platforms": [
+    "Docker Swarm"
+  ],
+  "summary": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0
+  },
+  "results": []
+}

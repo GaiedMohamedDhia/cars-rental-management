@@ -1,0 +1,5 @@
+Timestamp,Session ID,Platform,Scenario,Command,Exit Code,Error Type,Error Message,Suggested Solution
+2026-08-13T02:03:31.280001+00:00,20260813_024830_127c0b,swarm,network-partition,,N/A,ScenarioFailure,Critical cleanup/restoration failure: Swarm backend service did not return to Running state before timeout.,Inspect scenario log.
+2026-08-13T02:03:41.158344+00:00,20260813_024830_127c0b,swarm,latency,,N/A,PreconditionFailed,Precondition failed: Swarm backend health is not HTTP 200.,Check the environment and platform logs.
+2026-08-13T02:13:16.623220+00:00,20260813_024830_127c0b,kubernetes,memory,,N/A,ScenarioFailure,No healthy backend response was observed during the stress test.,Inspect scenario log.
+2026-08-13T02:15:20.651088+00:00,20260813_024830_127c0b,kubernetes,network-partition,,N/A,ScenarioFailure,Critical cleanup/restoration failure: Current scenario cancelled by user.,Inspect scenario log.

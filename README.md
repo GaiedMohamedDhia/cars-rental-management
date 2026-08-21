@@ -1,652 +1,392 @@
-# 🚗 TuniCars+ - Système de Gestion de Location de Voitures
+# TuniCars+ - Gestion de location de voitures
 
 <div align="center">
-  <img src="public/logo.png" alt="TuniCars+ Logo" width="200"/>
-  
-  **Une application web moderne pour la gestion de location de voitures**
-  
+  <img src="./public/logo.png" alt="Logo TuniCars+" width="520" />
+
+  <p><strong>CAR RENTAL MANAGEMENT</strong></p>
+  <p>Application web moderne pour gérer un parc automobile, les locataires, les locations, les paiements et la maintenance.</p>
+
+  [![Next.js](https://img.shields.io/badge/Next.js-16.0.3-black?logo=next.js)](https://nextjs.org/)
+  [![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&logoColor=black)](https://react.dev/)
   [![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
-  [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
-  [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql)](https://www.postgresql.org/)
-  [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](https://www.docker.com/)
+  [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+  [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+  [![Kubernetes](https://img.shields.io/badge/Kubernetes-Minikube-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 </div>
 
 ---
 
-## 📋 Table des Matières
+## Sommaire
 
-- [Aperçu du Projet](#-aperçu-du-projet)
-- [Fonctionnalités](#-fonctionnalités)
-- [Architecture du Projet](#-architecture-du-projet)
-- [Technologies Utilisées](#-technologies-utilisées)
-- [Structure du Projet](#-structure-du-projet)
-- [Backend FastAPI (Python)](#-backend-fastapi-python)
-- [Frontend Next.js](#-frontend-nextjs)
-- [Base de Données](#-base-de-données)
-- [Installation et Configuration](#-installation-et-configuration)
-- [Déploiement Docker](#-déploiement-docker)
-- [API Documentation](#-api-documentation)
-- [Auteurs](#-auteurs)
+- [Présentation](#présentation)
+- [Fonctionnalités](#fonctionnalités)
+- [Architecture](#architecture)
+- [Technologies](#technologies)
+- [Structure du projet](#structure-du-projet)
+- [Installation locale](#installation-locale)
+- [Démarrage avec Docker Compose](#démarrage-avec-docker-compose)
+- [Déploiement Kubernetes](#déploiement-kubernetes)
+- [Docker Swarm](#docker-swarm)
+- [API FastAPI](#api-fastapi)
+- [Configuration](#configuration)
+- [Framework de résilience](#framework-de-résilience)
+- [Sécurité et bonnes pratiques](#sécurité-et-bonnes-pratiques)
 
----
+## Présentation
 
-## 🎯 Aperçu du Projet
+TuniCars+ est une application trois tiers destinée à la gestion quotidienne d'une agence de location de voitures :
 
-**TuniCars+** est une application web complète de gestion de location de voitures développée dans le cadre d'un projet de fin d'année (PFA) en Programmation Python. L'application permet de gérer efficacement un parc automobile, les locataires et les locations.
+- frontend Next.js utilisant l'App Router ;
+- backend REST FastAPI protégé par JWT ;
+- base de données PostgreSQL pilotée par SQLAlchemy ;
+- proxy serveur Next.js entre le navigateur et FastAPI ;
+- déploiements Docker Compose, Docker Swarm et Kubernetes/Minikube.
 
-### Objectifs du Projet
-- Gérer un parc de voitures (CRUD complet)
-- Gérer les locataires (clients)
-- Gérer les locations (avec calcul automatique des prix)
-- Afficher des statistiques et revenus
-- Interface utilisateur moderne et responsive
+Dans le navigateur, les appels utilisent uniquement des chemins relatifs `/api/...`. Le serveur Next.js relaie les requêtes vers FastAPI grâce à `INTERNAL_API_BASE_URL`. Le nom interne Kubernetes `backend` n'est donc jamais exposé au client.
 
----
-
-## ✨ Fonctionnalités
-
-### 🚙 Gestion des Voitures
-- Ajouter, modifier, supprimer des voitures
-- Suivi du kilométrage
-- Gestion de l'état (disponible/louée)
-- Prix de location par jour
-
-### 👥 Gestion des Locataires
-- Ajouter, modifier, supprimer des locataires
-- Informations personnelles (nom, prénom, adresse)
-- Historique des locations par locataire
-
-### 📋 Gestion des Locations
-- Créer une nouvelle location
-- Sélection de la date de fin prévue
-- Calcul automatique du prix total
-- Retour de voiture avec mise à jour du kilométrage
-- Historique des locations
-
-### 📊 Tableau de Bord (Dashboard)
-- Statistiques en temps réel
-- Nombre de voitures (disponibles/louées)
-- Nombre de locataires
-- Locations actives
-- **Revenus par période** (Aujourd'hui, Cette semaine, Ce mois)
-
----
-
-## 🏗 Architecture du Projet
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        CLIENT (Browser)                          │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    FRONTEND (Next.js 16)                         │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐  │
-│  │   Pages     │  │ Components  │  │    API Client           │  │
-│  │  (App Dir)  │  │   (React)   │  │  (fetch → FastAPI)      │  │
-│  └─────────────┘  └─────────────┘  └─────────────────────────┘  │
-│                              │                                    │
-│                    Prisma (Schema & Migrations)                   │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼ HTTP REST API
-┌─────────────────────────────────────────────────────────────────┐
-│                    BACKEND (FastAPI/Python)                      │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐  │
-│  │   Routers   │  │   Schemas   │  │      CRUD Operations    │  │
-│  │ (Endpoints) │  │  (Pydantic) │  │      (SQLAlchemy)       │  │
-│  └─────────────┘  └─────────────┘  └─────────────────────────┘  │
-│                              │                                    │
-│                    SQLAlchemy ORM                                 │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    DATABASE (PostgreSQL 16)                      │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐  │
-│  │    cars     │  │   renters   │  │        rentals          │  │
-│  └─────────────┘  └─────────────┘  └─────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
+```text
+Navigateur
+   │  /api/...
+   ▼
+Next.js 16
+   │  INTERNAL_API_BASE_URL
+   ▼
+FastAPI
+   │  SQLAlchemy
+   ▼
+PostgreSQL 16
 ```
 
----
+## Fonctionnalités
 
-## 🛠 Technologies Utilisées
+### Authentification et profil
 
-### Backend (Python)
-| Technologie | Version | Description |
-|-------------|---------|-------------|
-| **Python** | 3.11+ | Langage de programmation |
-| **FastAPI** | 0.104.1 | Framework web moderne et performant |
-| **Uvicorn** | 0.24.0 | Serveur ASGI haute performance |
-| **SQLAlchemy** | 2.0.23 | ORM (Object-Relational Mapping) |
-| **Pydantic** | 2.5.0 | Validation des données |
-| **Psycopg2** | 2.9.9 | Driver PostgreSQL |
+- inscription et connexion JWT ;
+- restauration de la session avec `/auth/me` ;
+- profil utilisateur, photo, informations personnelles et poste ;
+- modification du mot de passe ;
+- enregistrement et affichage de la dernière connexion.
 
-### Frontend (TypeScript/JavaScript)
-| Technologie | Version | Description |
-|-------------|---------|-------------|
-| **Next.js** | 16.0.3 | Framework React avec SSR |
-| **React** | 19 | Bibliothèque UI |
-| **TypeScript** | 5.x | Typage statique |
-| **Tailwind CSS** | 3.x | Framework CSS utility-first |
-| **Prisma** | 6.x | ORM pour migrations |
+### Tableau de bord
 
-### Infrastructure
-| Technologie | Version | Description |
-|-------------|---------|-------------|
-| **PostgreSQL** | 16 | Base de données relationnelle |
-| **Docker** | Latest | Conteneurisation |
-| **Docker Compose** | 3.8 | Orchestration des conteneurs |
+- accueil personnalisé avec les données de l'utilisateur connecté ;
+- indicateurs issus des données réelles ;
+- état du parc et statut des locations ;
+- historique récent des maintenances ;
+- notifications calculées à partir des locations et maintenances existantes.
 
----
+### Véhicules
 
-## 📁 Structure du Projet
+- création, consultation, modification et suppression/archivage ;
+- photo persistante, marque, modèle, année et immatriculation ;
+- kilométrage, prix journalier et caractéristiques techniques ;
+- états : disponible, louée, maintenance ou indisponible ;
+- recherche et filtres avancés.
 
-```
-cars-rental/
-│
-├── 📂 backend/                    # Backend FastAPI (Python)
-│   ├── __init__.py
-│   ├── main.py                    # Point d'entrée FastAPI
-│   ├── database.py                # Configuration base de données
-│   ├── models.py                  # Modèles SQLAlchemy
-│   ├── schemas.py                 # Schémas Pydantic
-│   ├── crud.py                    # Opérations CRUD
-│   ├── run.py                     # Script de démarrage
-│   ├── requirements.txt           # Dépendances Python
-│   └── 📂 routers/                # Endpoints API
-│       ├── __init__.py
-│       ├── cars.py                # Routes /cars
-│       ├── renters.py             # Routes /renters
-│       └── rentals.py             # Routes /rentals
-│
-├── 📂 app/                        # Frontend Next.js (App Router)
-│   ├── layout.tsx                 # Layout principal
-│   ├── page.tsx                   # Page d'accueil (Dashboard)
-│   ├── globals.css                # Styles globaux
-│   ├── 📂 cars/                   # Pages voitures
-│   │   ├── page.tsx               # Liste des voitures
-│   │   ├── 📂 new/
-│   │   │   └── page.tsx           # Nouvelle voiture
-│   │   └── 📂 [id]/
-│   │       ├── page.tsx           # Détails voiture
-│   │       └── 📂 edit/
-│   │           └── page.tsx       # Modifier voiture
-│   ├── 📂 renters/                # Pages locataires
-│   │   └── (même structure)
-│   └── 📂 rentals/                # Pages locations
-│       └── (même structure)
-│
-├── 📂 components/                 # Composants React réutilisables
-│   ├── CarForm.tsx                # Formulaire voiture
-│   ├── RenterForm.tsx             # Formulaire locataire
-│   ├── RentalForm.tsx             # Formulaire location
-│   ├── ReturnCarForm.tsx          # Formulaire retour voiture
-│   ├── DeleteCarButton.tsx        # Bouton suppression voiture
-│   ├── DeleteRenterButton.tsx     # Bouton suppression locataire
-│   └── SearchRenters.tsx          # Recherche locataires
-│
-├── 📂 lib/                        # Utilitaires
-│   ├── api-client.ts              # Client API (fetch vers FastAPI)
-│   └── prisma.ts                  # Client Prisma
-│
-├── 📂 types/                      # Types TypeScript
-│   ├── index.d.ts                 # Export des types
-│   ├── cars.d.ts                  # Types voitures
-│   ├── renters.d.ts               # Types locataires
-│   ├── rentals.d.ts               # Types locations
-│   └── api.d.ts                   # Types API
-│
-├── 📂 prisma/                     # Configuration Prisma
-│   ├── schema.prisma              # Schéma de la base de données
-│   ├── seed.ts                    # Données initiales
-│   └── 📂 migrations/             # Migrations SQL
-│
-├── 📂 public/                     # Fichiers statiques
-│   └── logo.png
-│
-├── 📄 docker-compose.yml          # Configuration Docker
-├── 📄 Dockerfile.frontend         # Image Docker frontend
-├── 📄 Dockerfile.backend          # Image Docker backend
-├── 📄 package.json                # Dépendances Node.js
-├── 📄 next.config.ts              # Configuration Next.js
-├── 📄 tsconfig.json               # Configuration TypeScript
-└── 📄 README.md                   # Ce fichier
-```
+### Locataires
 
----
+- création, consultation, modification et suppression/archivage ;
+- photo, coordonnées, CIN, ville et adresse ;
+- statistiques et historique des locations ;
+- recherche instantanée et filtres.
 
-## 🐍 Backend FastAPI (Python)
+### Locations
 
-### Structure du Backend
+- création avec une voiture disponible et un locataire actif ;
+- modification et consultation détaillée ;
+- retour avec kilométrage final et date réelle ;
+- distinction entre retour à temps, retour en retard et location encore en retard ;
+- mise à jour automatique de l'état du véhicule ;
+- historique des locations terminées.
 
-Le backend suit une architecture en couches claire et maintenable :
+### Paiements et factures
 
-```
-backend/
-├── main.py          # Application FastAPI + Configuration CORS
-├── database.py      # Connexion PostgreSQL avec SQLAlchemy
-├── models.py        # Modèles ORM (Car, Renter, Rental)
-├── schemas.py       # Schémas Pydantic pour validation
-├── crud.py          # Opérations CRUD (Create, Read, Update, Delete)
-└── routers/         # Routes API organisées par ressource
-    ├── cars.py      # Endpoints /cars/*
-    ├── renters.py   # Endpoints /renters/*
-    └── rentals.py   # Endpoints /rentals/*
-```
+- paiements associés aux locations ;
+- statuts payé, en attente, annulé ou partiellement payé ;
+- numéro de facture unique ;
+- aperçu, impression et génération PDF ;
+- détails du client, du véhicule, de la location et du paiement.
 
-### Modèles de Données (models.py)
+### Maintenance
 
-```python
-# Modèle Voiture
-class Car(Base):
-    __tablename__ = "cars"
-    
-    id = Column(Integer, primary_key=True)
-    numImma = Column(String, unique=True)      # Numéro d'immatriculation
-    marque = Column(String)                     # Marque
-    modele = Column(String)                     # Modèle
-    kilometrage = Column(Integer)               # Kilométrage actuel
-    etat = Column(Integer, default=0)           # 0: disponible, 1: louée
-    prixLocation = Column(Float)                # Prix par jour (DT)
-    createdAt = Column(DateTime)
-    updatedAt = Column(DateTime)
+- liste, recherche, filtres et tri ;
+- ajout, consultation, modification et suppression ;
+- association à une voiture existante ;
+- coût, kilométrage, date, type et statut ;
+- export PDF et historique récent sur le Dashboard.
 
-# Modèle Locataire
-class Renter(Base):
-    __tablename__ = "renters"
-    
-    id = Column(Integer, primary_key=True)
-    nom = Column(String)                        # Nom de famille
-    prenom = Column(String)                     # Prénom
-    adresse = Column(String)                    # Adresse
-    createdAt = Column(DateTime)
-    updatedAt = Column(DateTime)
+## Architecture
 
-# Modèle Location
-class Rental(Base):
-    __tablename__ = "rentals"
-    
-    id = Column(Integer, primary_key=True)
-    carId = Column(Integer, ForeignKey("cars.id"))
-    renterId = Column(Integer, ForeignKey("renters.id"))
-    dateDebut = Column(DateTime)                # Date de début
-    dateFin = Column(DateTime, nullable=True)   # Date de fin (null si active)
-    kmDebut = Column(Integer)                   # Kilométrage au départ
-    kmFin = Column(Integer, nullable=True)      # Kilométrage au retour
-    montantTotal = Column(Float, nullable=True) # Montant total calculé
+### Frontend
+
+- pages : `app/` ;
+- composants métier : `components/` ;
+- client API : `lib/api-client.ts` ;
+- proxy vers FastAPI : `app/api/[...path]/route.ts` ;
+- types TypeScript : `types/` ;
+- ressources visuelles : `public/` ;
+- build Docker : mode Next.js `standalone`.
+
+### Backend
+
+- application FastAPI : `backend/main.py` ;
+- modèles SQLAlchemy : `backend/models.py` ;
+- schémas Pydantic : `backend/schemas.py` ;
+- opérations de données : `backend/crud.py` ;
+- sécurité JWT : `backend/security.py` ;
+- routes : `backend/routers/` ;
+- fichiers téléversés : `uploads/`.
+
+### Données principales
+
+- `users` ;
+- `cars` ;
+- `renters` ;
+- `rentals` ;
+- `payments` ;
+- `maintenances`.
+
+## Technologies
+
+| Couche | Technologies |
+|---|---|
+| Frontend | Next.js 16.0.3, React 19.2, TypeScript 5.9, Tailwind CSS 4, Lucide React, Recharts, Framer Motion |
+| Backend | Python 3.12, FastAPI 0.104.1, Uvicorn 0.24, SQLAlchemy 2.0, Pydantic 2.5 |
+| Données | PostgreSQL 16, psycopg2, migrations de compatibilité SQLAlchemy |
+| Documents | jsPDF, html2canvas, QRCode |
+| Conteneurs | Docker, Docker Compose, images standalone Next.js et Python slim |
+| Orchestration | Docker Swarm, Kubernetes et Minikube |
+
+## Structure du projet
+
+```text
+cars-rental-main/
+├── app/                         # Pages et route handler Next.js
+│   ├── api/[...path]/           # Proxy serveur vers FastAPI
+│   ├── cars/                    # Véhicules
+│   ├── locataires/              # Locataires
+│   ├── rentals/                 # Locations
+│   ├── maintenance/             # Maintenance
+│   ├── paiement/                # Paiements et factures
+│   ├── profile/                 # Profil connecté
+│   ├── login/                   # Connexion
+│   └── register/                # Inscription
+├── backend/
+│   ├── main.py
+│   ├── database.py
+│   ├── models.py
+│   ├── schemas.py
+│   ├── crud.py
+│   ├── security.py
+│   ├── requirements.txt
+│   └── routers/
+│       ├── auth.py
+│       ├── cars.py
+│       ├── renters.py
+│       ├── rentals.py
+│       ├── payments.py
+│       └── maintenance.py
+├── components/                  # Composants React métier
+├── lib/                         # Client API et utilitaires
+├── types/                       # Contrats TypeScript
+├── prisma/                      # Schéma et outils Prisma historiques
+├── public/                      # Logo et ressources statiques
+├── uploads/                     # Photos persistantes téléversées
+├── k8s/                         # Manifests Minikube/Kubernetes
+├── resilience-tests/            # Architecture du futur framework de résilience
+├── Dockerfile.backend
+├── Dockerfile.frontend
+├── docker-compose.yml
+├── docker-stack.yml
+├── next.config.ts
+└── package.json
 ```
 
-### Schémas Pydantic (schemas.py)
-
-Les schémas Pydantic assurent la validation des données entrantes et sortantes :
-
-```python
-# Schéma de création d'une voiture
-class CarCreate(BaseModel):
-    numImma: str
-    marque: str
-    modele: str
-    kilometrage: int
-    prixLocation: float
-    etat: int = 0
-
-# Schéma de réponse
-class CarResponse(CarCreate):
-    id: int
-    createdAt: datetime
-    updatedAt: datetime
-```
-
-### Points d'Entrée API (Routers)
-
-| Fichier | Préfixe | Description |
-|---------|---------|-------------|
-| `cars.py` | `/cars` | Gestion des voitures |
-| `renters.py` | `/renters` | Gestion des locataires |
-| `rentals.py` | `/rentals` | Gestion des locations |
-
-### Configuration CORS (main.py)
-
-```python
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-```
-
-### Démarrage du Backend
-
-```bash
-# Méthode 1: Avec uvicorn directement
-cd backend
-uvicorn main:app --reload --port 8000
-
-# Méthode 2: Avec le script run.py
-cd backend
-python run.py
-```
-
----
-
-## ⚛️ Frontend Next.js
-
-### App Router (Next.js 16)
-
-Le frontend utilise le nouveau **App Router** de Next.js avec :
-- **Server Components** pour le rendu côté serveur
-- **Client Components** pour l'interactivité
-
-### Pages Principales
-
-| Route | Page | Description |
-|-------|------|-------------|
-| `/` | Dashboard | Tableau de bord avec statistiques |
-| `/cars` | Liste voitures | Affiche toutes les voitures |
-| `/cars/new` | Nouvelle voiture | Formulaire d'ajout |
-| `/cars/[id]` | Détails voiture | Informations et historique |
-| `/renters` | Liste locataires | Affiche tous les locataires |
-| `/renters/new` | Nouveau locataire | Formulaire d'ajout |
-| `/rentals` | Liste locations | Locations actives et historique |
-| `/rentals/new` | Nouvelle location | Formulaire de location |
-
-### Client API (lib/api-client.ts)
-
-Le client API centralise toutes les communications avec le backend :
-
-```typescript
-// Configuration
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
-
-// Exemple d'utilisation
-export const carsAPI = {
-  getAll: async () => apiFetch<Car[]>('/cars'),
-  getById: async (id: number) => apiFetch<Car>(`/cars/${id}`),
-  create: async (data: CreateCarInput) => apiFetch<Car>('/cars', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  }),
-  update: async (id: number, data: UpdateCarInput) => apiFetch<Car>(`/cars/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(data),
-  }),
-  delete: async (id: number) => apiFetch(`/cars/${id}`, {
-    method: 'DELETE',
-  }),
-}
-```
-
----
-
-## 🗄 Base de Données
-
-### Schéma de la Base de Données
-
-```
-┌─────────────────────┐       ┌─────────────────────┐
-│       cars          │       │      renters        │
-├─────────────────────┤       ├─────────────────────┤
-│ id (PK)             │       │ id (PK)             │
-│ numImma (UNIQUE)    │       │ nom                 │
-│ marque              │       │ prenom              │
-│ modele              │       │ adresse             │
-│ kilometrage         │       │ createdAt           │
-│ etat                │       │ updatedAt           │
-│ prixLocation        │       └─────────────────────┘
-│ createdAt           │                │
-│ updatedAt           │                │
-└─────────────────────┘                │
-         │                             │
-         │      ┌─────────────────────┐│
-         │      │      rentals        ││
-         │      ├─────────────────────┤│
-         └──────│ carId (FK)          ││
-                │ renterId (FK) ───────┘
-                │ id (PK)             │
-                │ dateDebut           │
-                │ dateFin             │
-                │ kmDebut             │
-                │ kmFin               │
-                │ montantTotal        │
-                │ createdAt           │
-                │ updatedAt           │
-                └─────────────────────┘
-```
-
-### Relations
-
-- **Car → Rental** : One-to-Many (Une voiture peut avoir plusieurs locations)
-- **Renter → Rental** : One-to-Many (Un locataire peut avoir plusieurs locations)
-
----
-
-## 🚀 Installation et Configuration
+## Installation locale
 
 ### Prérequis
 
-- **Python** 3.11 ou supérieur
-- **Node.js** 18 ou supérieur
-- **PostgreSQL** 14 ou supérieur
-- **npm** ou **pnpm**
+- Node.js 20 ou supérieur ;
+- Python 3.12 recommandé ;
+- PostgreSQL 16 ;
+- npm ;
+- Docker Desktop pour les déploiements conteneurisés.
 
-### 1. Cloner le Repository
+### Variables d'environnement
 
-```bash
-git clone https://github.com/votre-username/cars-rental.git
-cd cars-rental
+Copier le modèle sans publier de secret :
+
+```powershell
+Copy-Item .env.example .env
 ```
 
-### 2. Configuration de l'Environnement
+Configurer au minimum :
 
-Créer un fichier `.env` à la racine :
-
-```env
-# Database
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/cars-rental?schema=public"
-
-# API Configuration
-NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
-NEXT_PUBLIC_API_HEALTH=/health
-NEXT_PUBLIC_API_ROOT=/
-NEXT_PUBLIC_API_CARS_BASE=/cars
-NEXT_PUBLIC_API_CARS_GET_ALL=/cars
-NEXT_PUBLIC_API_CARS_GET_BY_ID=/cars/{id}
-NEXT_PUBLIC_API_CARS_CREATE=/cars
-NEXT_PUBLIC_API_CARS_UPDATE=/cars/{id}
-NEXT_PUBLIC_API_CARS_DELETE=/cars/{id}
-NEXT_PUBLIC_API_RENTERS_BASE=/renters
-NEXT_PUBLIC_API_RENTERS_GET_ALL=/renters
-NEXT_PUBLIC_API_RENTERS_GET_BY_ID=/renters/{id}
-NEXT_PUBLIC_API_RENTERS_CREATE=/renters
-NEXT_PUBLIC_API_RENTERS_UPDATE=/renters/{id}
-NEXT_PUBLIC_API_RENTERS_DELETE=/renters/{id}
-NEXT_PUBLIC_API_RENTERS_SEARCH=/renters
-NEXT_PUBLIC_API_RENTALS_BASE=/rentals
-NEXT_PUBLIC_API_RENTALS_GET_ALL=/rentals
-NEXT_PUBLIC_API_RENTALS_GET_BY_ID=/rentals/{id}
-NEXT_PUBLIC_API_RENTALS_GET_BY_CAR=/rentals/car/{car_id}
-NEXT_PUBLIC_API_RENTALS_GET_BY_RENTER=/rentals/renter/{renter_id}
-NEXT_PUBLIC_API_RENTALS_CREATE=/rentals
-NEXT_PUBLIC_API_RENTALS_UPDATE=/rentals/{id}
-NEXT_PUBLIC_API_RENTALS_DELETE=/rentals/{id}
+```dotenv
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DATABASE
+SECRET_KEY=GENERATE_A_RANDOM_SECRET_OF_AT_LEAST_32_CHARACTERS
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+INTERNAL_API_BASE_URL=http://127.0.0.1:8000
 ```
 
-### 3. Installation du Backend (Python)
+Ne jamais committer `.env`, un mot de passe PostgreSQL ou une clé JWT.
 
-```bash
-# Créer un environnement virtuel
-python -m venv venv
+### Backend FastAPI
 
-# Activer l'environnement (Windows)
-.\venv\Scripts\activate
-
-# Activer l'environnement (Linux/Mac)
-source venv/bin/activate
-
-# Installer les dépendances
-pip install -r backend/requirements.txt
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r backend\requirements.txt
+python -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### 4. Installation du Frontend (Node.js)
+### Frontend Next.js
 
-```bash
-# Installer les dépendances
+Dans un second terminal :
+
+```powershell
 npm install
-
-# Générer le client Prisma
-npx prisma generate
-
-# Appliquer les migrations
-npx prisma db push
-```
-
-### 5. Démarrage en Développement
-
-**Terminal 1 - Backend :**
-```bash
-cd backend
-python run.py
-```
-
-**Terminal 2 - Frontend :**
-```bash
+$env:INTERNAL_API_BASE_URL="http://127.0.0.1:8000"
 npm run dev
 ```
 
-### 6. Accès à l'Application
+Accès :
 
-- **Frontend** : http://localhost:3000
-- **Backend API** : http://localhost:8000
-- **Documentation API** : http://localhost:8000/docs
+- application : `http://localhost:3000` ;
+- santé FastAPI via Next.js : `http://localhost:3000/api/health` ;
+- Swagger : `http://localhost:8000/docs`.
 
----
+## Démarrage avec Docker Compose
 
-## 🐳 Déploiement Docker
-
-### Démarrage Rapide
-
-```bash
-# Construire et démarrer tous les services
-docker-compose up -d
-
-# Vérifier le statut
-docker-compose ps
-
-# Voir les logs
-docker-compose logs -f
+```powershell
+docker compose up --build -d
+docker compose ps
+docker compose logs -f backend frontend
 ```
 
-### Services Docker
+Arrêt sans suppression des volumes :
 
-| Service | Port | Description |
-|---------|------|-------------|
-| `database` | 5432 | PostgreSQL 16 |
-| `backend` | 8000 | FastAPI |
-| `frontend` | 3000 | Next.js |
-
-### Commandes Utiles
-
-```bash
-# Arrêter les services
-docker-compose down
-
-# Reconstruire les images
-docker-compose build --no-cache
-
-# Supprimer les volumes (⚠️ supprime les données)
-docker-compose down -v
+```powershell
+docker compose down
 ```
 
----
+Le frontend Docker utilise `INTERNAL_API_BASE_URL=http://backend:8000` sur le réseau Compose.
 
-## 📚 API Documentation
+## Déploiement Kubernetes
 
-### Endpoints Disponibles
+Construire et charger les images dans Minikube :
 
-L'API REST complète est disponible à :
-- **Swagger UI** : http://localhost:8000/docs
-- **ReDoc** : http://localhost:8000/redoc
+```powershell
+docker build -f Dockerfile.backend -t cars-rental-backend:latest .
+docker build -f Dockerfile.frontend -t cars-rental-frontend:latest .
 
-### Résumé des Endpoints
+minikube image load cars-rental-backend:latest
+minikube image load cars-rental-frontend:latest
+```
 
-#### 🚗 Cars (Voitures)
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/cars` | Liste toutes les voitures |
-| GET | `/cars/{id}` | Détails d'une voiture |
-| POST | `/cars` | Créer une voiture |
-| PUT | `/cars/{id}` | Modifier une voiture |
-| DELETE | `/cars/{id}` | Supprimer une voiture |
+Déployer :
 
-#### 👥 Renters (Locataires)
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/renters` | Liste tous les locataires |
-| GET | `/renters/{id}` | Détails d'un locataire |
-| POST | `/renters` | Créer un locataire |
-| PUT | `/renters/{id}` | Modifier un locataire |
-| DELETE | `/renters/{id}` | Supprimer un locataire |
+```powershell
+kubectl apply -f k8s/database.yaml
+kubectl apply -f k8s/backend.yaml
+kubectl apply -f k8s/frontend.yaml
 
-#### 📋 Rentals (Locations)
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/rentals` | Liste toutes les locations |
-| GET | `/rentals/{id}` | Détails d'une location |
-| GET | `/rentals/car/{car_id}` | Locations d'une voiture |
-| GET | `/rentals/renter/{renter_id}` | Locations d'un locataire |
-| POST | `/rentals` | Créer une location |
-| PUT | `/rentals/{id}` | Modifier/Terminer une location |
-| DELETE | `/rentals/{id}` | Supprimer une location |
+kubectl rollout status deployment/database
+kubectl rollout status deployment/backend
+kubectl rollout status deployment/frontend
+```
 
-#### 🔧 System
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/` | Informations API |
-| GET | `/health` | Health check |
+Ouvrir uniquement le frontend :
 
----
+```powershell
+minikube service frontend
+```
 
-## 📸 Captures d'Écran
+Dans Kubernetes, le pod frontend utilise `INTERNAL_API_BASE_URL=http://backend:8000`. Aucun port-forward backend n'est nécessaire pour le fonctionnement normal de l'application.
 
-### Dashboard
-Le tableau de bord affiche les statistiques principales :
-- Total des voitures (disponibles/louées)
-- Total des locataires
-- Locations actives
-- Revenus (total, aujourd'hui, cette semaine, ce mois)
+## Docker Swarm
 
-### Gestion des Voitures
-Liste des voitures avec état (disponible/louée), prix, et actions CRUD.
+Le projet contient [docker-stack.yml](./docker-stack.yml) pour le déploiement Swarm.
 
-### Nouvelle Location
-Formulaire avec :
-- Sélection de voiture
-- Sélection de locataire
-- Date de fin prévue
-- Calcul automatique du prix estimé
+```powershell
+docker swarm init
+docker stack deploy -c docker-stack.yml cars-rental
+docker stack services cars-rental
+```
 
----
+Avant un déploiement réel, fournir les secrets et paramètres attendus par la stack sans les écrire dans le dépôt.
 
-## 👨‍💻 Auteurs
+## API FastAPI
 
-**Projet de Fin d'Année (PFA)** - Programmation Python
+Routes publiques :
 
-- **École** : ING2
-- **Année** : 2026
+| Méthode | Route | Description |
+|---|---|---|
+| GET | `/health` | Santé du backend |
+| POST | `/auth/login` | Connexion |
+| POST | `/auth/register` | Inscription |
 
----
+Routes privées principales :
 
-## 📄 Licence
+| Ressource | Routes |
+|---|---|
+| Utilisateur | `/auth/me`, `/auth/me/password` |
+| Véhicules | `/cars`, `/cars/{id}` |
+| Locataires | `/renters`, `/renters/{id}`, `/renters/{id}/photo` |
+| Locations | `/rentals`, `/rentals/{id}`, `/rentals/car/{id}`, `/rentals/renter/{id}` |
+| Paiements | `/payments`, `/payments/{id}` |
+| Maintenance | `/maintenance`, `/maintenance/{id}` |
 
-Ce projet est développé dans un cadre académique.
+Les routes privées attendent :
 
----
+```http
+Authorization: Bearer <JWT>
+```
+
+Le navigateur appelle ces routes à travers `/api`, par exemple `/api/cars` ou `/api/maintenance`.
+
+## Configuration
+
+| Variable | Composant | Rôle |
+|---|---|---|
+| `DATABASE_URL` | Backend | Connexion PostgreSQL |
+| `SECRET_KEY` | Backend | Signature des JWT |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | Backend | Durée de validité du token |
+| `INTERNAL_API_BASE_URL` | Serveur Next.js | Adresse interne de FastAPI |
+| `NEXT_PUBLIC_COMPANY_*` | Frontend | Coordonnées affichées sur les factures |
+
+`INTERNAL_API_BASE_URL` est une variable serveur. Elle ne doit pas être remplacée par une adresse Kubernetes exposée au navigateur.
+
+## Framework de résilience
+
+Le dossier [resilience-tests](./resilience-tests) contient un lanceur Windows interactif, des vérifications d'environnement, un mode dry-run, des baselines de santé, la persistance CSV/JSON, des graphiques, un rapport HTML et des tests unitaires.
+
+Les scénarios perturbateurs qui ne disposent pas encore d'un mécanisme local sûr et réversible sont marqués `SKIPPED`. Ils ne sont jamais simulés avec de fausses métriques et ne sont pas exécutés automatiquement.
+
+## Sécurité et bonnes pratiques
+
+- protéger toutes les routes métier avec JWT ;
+- conserver les secrets hors du dépôt ;
+- utiliser les secrets Kubernetes ou Docker plutôt que des valeurs codées en dur ;
+- ne jamais supprimer les volumes PostgreSQL pendant les opérations ordinaires ;
+- conserver l'historique métier par archivage lorsque des relations existent ;
+- valider les fichiers téléversés et limiter leur taille ;
+- exécuter les conteneurs avec des utilisateurs non-root ;
+- vérifier `/health` avec les probes Docker/Kubernetes.
+
+## Vérifications utiles
+
+```powershell
+npm run build
+docker build -f Dockerfile.frontend -t cars-rental-frontend:latest .
+docker build -f Dockerfile.backend -t cars-rental-backend:latest .
+```
+
+## Projet académique
+
+TuniCars+ est développé dans le cadre d'un projet académique de gestion de location automobile et d'étude comparative de résilience entre plateformes d'orchestration.
 
 <div align="center">
-  <p>Made with ❤️ using FastAPI & Next.js</p>
+  <img src="./public/logo-mark.png" alt="Symbole TuniCars+" width="90" />
+  <p><strong>TuniCars+ - Car Rental Management</strong></p>
 </div>
